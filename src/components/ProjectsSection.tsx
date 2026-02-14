@@ -4,6 +4,16 @@ import { supabase } from "@/lib/supabase";
 export const revalidate = 0;
 
 export default async function ProjectsSection() {
+    if (!supabase) {
+        return (
+            <section id="projects" className="py-20 bg-gray-50 dark:bg-gray-950 transition-colors duration-300">
+                <div className="container mx-auto px-6 max-w-6xl text-center">
+                    <p className="text-gray-500 dark:text-gray-400 text-xl">Projects are currently unavailable.</p>
+                </div>
+            </section>
+        )
+    }
+
     const { data: projects, error } = await supabase
         .from("projects")
         .select("*")

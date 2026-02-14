@@ -12,6 +12,11 @@ export default function Blog() {
 
     useEffect(() => {
         const fetchPosts = async () => {
+            if (!supabase) {
+                setLoading(false);
+                return;
+            }
+
             const { data, error } = await supabase
                 .from("blogs")
                 .select("*")

@@ -1,6 +1,16 @@
 import { createBrowserClient } from '@supabase/ssr'
 
-export const supabase = createBrowserClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
-)
+export const createClient = () => {
+    const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!
+    const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+
+    return createBrowserClient(supabaseUrl, supabaseAnonKey)
+}
+
+// Keep the singleton for backwards compatibility but ensure it's safe
+export const supabase = (typeof window !== 'undefined' && process.env.NEXT_PUBLIC_SUPABASE_URL)
+    ? createBrowserClient(
+        process.env.NEXT_PUBLIC_SUPABASE_URL!,
+        process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+    )
+    : (null as any)
