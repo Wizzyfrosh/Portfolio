@@ -6,9 +6,9 @@ import SkillsBar from "./SkillsBar";
 
 export default function Hero() {
     return (
-        <section className="relative min-h-[90vh] flex items-center pt-28 pb-0 overflow-hidden bg-white">
+        <section className="relative min-h-[90vh] flex items-center pt-28 pb-0 overflow-hidden bg-white dark:bg-gray-900 transition-colors duration-300">
             {/* Very subtle left-side blue gradient */}
-            <div className="absolute top-0 left-0 w-[40%] h-full bg-gradient-to-r from-blue-50/60 to-transparent pointer-events-none" />
+            <div className="absolute top-0 left-0 w-[40%] h-full bg-gradient-to-r from-blue-50/60 to-transparent dark:from-blue-900/10 pointer-events-none" />
 
             <div className="container mx-auto px-6 max-w-6xl grid md:grid-cols-2 gap-8 items-end">
                 {/* Text Content - Left Side */}
@@ -22,19 +22,19 @@ export default function Hero() {
                         initial={{ opacity: 0, y: 20 }}
                         animate={{ opacity: 1, y: 0 }}
                         transition={{ delay: 0.2 }}
-                        className="text-[3.2rem] md:text-[4rem] lg:text-[4.5rem] font-extrabold text-gray-900 leading-[1.1] mb-4"
+                        className="text-[3.2rem] md:text-[4rem] lg:text-[4.5rem] font-extrabold text-gray-900 dark:text-white leading-[1.1] mb-4"
                     >
                         Hello!{" "}
-                        <span className="text-blue-600">I&apos;m</span>
+                        <span className="text-blue-600 dark:text-blue-400">I&apos;m</span>
                         <br />
-                        <span className="text-blue-600">Umanor Wisdom</span>
+                        <span className="text-blue-600 dark:text-blue-400">Umanor Wisdom</span>
                     </motion.h1>
 
                     <motion.h2
                         initial={{ opacity: 0, y: 10 }}
                         animate={{ opacity: 1, y: 0 }}
                         transition={{ delay: 0.4 }}
-                        className="text-lg md:text-xl font-medium text-gray-600 mb-8"
+                        className="text-lg md:text-xl font-medium text-gray-600 dark:text-gray-300 mb-8"
                     >
                         Web &amp; Software Developer
                     </motion.h2>
@@ -50,7 +50,7 @@ export default function Hero() {
                             "Creating responsive and efficient solutions.",
                             "Backend & frontend development."
                         ].map((text, i) => (
-                            <li key={i} className="flex items-center gap-3 text-gray-600">
+                            <li key={i} className="flex items-center gap-3 text-gray-600 dark:text-gray-300">
                                 <div className="flex-shrink-0">
                                     <Check size={18} strokeWidth={3} className="text-emerald-500" />
                                 </div>
@@ -65,11 +65,11 @@ export default function Hero() {
                         transition={{ delay: 0.8 }}
                         className="flex flex-wrap items-center gap-4"
                     >
-                        <button className="px-7 py-3 bg-red-500 text-white font-bold text-sm rounded-md hover:bg-red-600 transition-all duration-300">
-                            Let&apos;s Talk
+                        <button className="px-7 py-3 bg-red-500 text-white font-bold text-sm rounded-md hover:bg-red-600 transition-all duration-300 shadow-lg hover:shadow-red-500/25">
+                           <a href="#contact"> Let&apos;s Talk</a>
                         </button>
-                        <button className="px-6 py-3 border border-gray-300 text-gray-800 font-semibold text-sm rounded-md flex items-center gap-2 hover:border-gray-500 transition-all duration-300">
-                            View Portfolio <ArrowRight size={16} />
+                        <button className="px-6 py-3 border border-gray-300 dark:border-gray-600 text-gray-800 dark:text-gray-200 font-semibold text-sm rounded-md flex items-center gap-2 hover:border-gray-500 dark:hover:border-gray-400 hover:bg-gray-50 dark:hover:bg-gray-800 transition-all duration-300">
+                           <a href="#projects"> View Portfolio</a> <ArrowRight size={16} />
                         </button>
                     </motion.div>
                 </motion.div>
@@ -81,8 +81,7 @@ export default function Hero() {
                     transition={{ duration: 0.8, delay: 0.3 }}
                     className="relative flex flex-col items-center justify-end"
                 >
-                    {/* ===== Decorative Elements ===== */}
-
+                    {/* ... (Existing decorative elements remain mostly same, maybe update borders if needed) ... */}
                     {/* Circle ring outline - top right */}
                     <motion.div
                         initial={{ opacity: 0, scale: 0 }}
@@ -90,6 +89,8 @@ export default function Hero() {
                         transition={{ delay: 1.2, duration: 0.5 }}
                         className="absolute -top-2 right-0 w-[70px] h-[70px] border-[3px] border-blue-400 rounded-full"
                     />
+
+                    {/* ... (dots & blobs are fine) ... */}
 
                     {/* Small purple/blue dot - near "I'm" text area */}
                     <motion.div
@@ -144,7 +145,7 @@ export default function Hero() {
                         transition={{ delay: 1, duration: 0.5, type: "spring" }}
                         className="absolute left-[5%] top-[52%] z-20"
                     >
-                        <div className="bg-gray-800 text-white px-5 py-2 rounded-lg text-sm font-semibold shadow-lg">
+                        <div className="bg-gray-800 dark:bg-white text-white dark:text-gray-900 px-5 py-2 rounded-lg text-sm font-semibold shadow-lg">
                             Available for work
                         </div>
                     </motion.div>

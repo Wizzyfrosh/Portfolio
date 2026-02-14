@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
-import { supabase } from "@/lib/supabase";
+import { supabase } from "@/lib/supabase-browser";
 import { PlusCircle, Edit2, Trash2, Eye } from "lucide-react";
 import Image from "next/image";
 

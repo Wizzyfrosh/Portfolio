@@ -11,12 +11,12 @@ const offerings = [
         description: "Building modern, responsive websites with cutting-edge technologies and beautiful user interfaces.",
         tech: ["JavaScript", "React", "Next.js"],
         color: "from-blue-500 to-blue-600",
-        lightColor: "bg-blue-50",
-        textColor: "text-blue-600",
+        lightColor: "bg-blue-50 dark:bg-blue-900/20",
+        textColor: "text-blue-600 dark:text-blue-400",
         borderColor: "border-l-blue-500",
         shadowColor: "shadow-blue-500/10",
-        tagBg: "bg-blue-50",
-        tagText: "text-blue-700",
+        tagBg: "bg-blue-50 dark:bg-blue-900/20",
+        tagText: "text-blue-700 dark:text-blue-300",
     },
     {
         num: "02",
@@ -25,12 +25,12 @@ const offerings = [
         description: "Creating powerful, scalable applications with clean architecture and robust backend systems.",
         tech: ["Node.js", "Python", "TypeScript"],
         color: "from-purple-500 to-purple-600",
-        lightColor: "bg-purple-50",
-        textColor: "text-purple-600",
+        lightColor: "bg-purple-50 dark:bg-purple-900/20",
+        textColor: "text-purple-600 dark:text-purple-400",
         borderColor: "border-l-purple-500",
         shadowColor: "shadow-purple-500/10",
-        tagBg: "bg-purple-50",
-        tagText: "text-purple-700",
+        tagBg: "bg-purple-50 dark:bg-purple-900/20",
+        tagText: "text-purple-700 dark:text-purple-300",
     },
     {
         num: "03",
@@ -39,12 +39,12 @@ const offerings = [
         description: "End-to-end development of web applications, from database design to deployment and monitoring.",
         tech: ["MERN", "REST API", "SQL"],
         color: "from-emerald-500 to-emerald-600",
-        lightColor: "bg-emerald-50",
-        textColor: "text-emerald-600",
+        lightColor: "bg-emerald-50 dark:bg-emerald-900/20",
+        textColor: "text-emerald-600 dark:text-emerald-400",
         borderColor: "border-l-emerald-500",
         shadowColor: "shadow-emerald-500/10",
-        tagBg: "bg-emerald-50",
-        tagText: "text-emerald-700",
+        tagBg: "bg-emerald-50 dark:bg-emerald-900/20",
+        tagText: "text-emerald-700 dark:text-emerald-300",
     }
 ];
 
@@ -58,18 +58,18 @@ const containerVariants = {
 
 const cardVariants = {
     hidden: { opacity: 0, y: 30 },
-    visible: { opacity: 1, y: 0, transition: { duration: 0.5, ease: "easeOut" } }
+    visible: { opacity: 1, y: 0, transition: { duration: 0.5, ease: "easeOut" as const } }
 };
 
 export default function Services() {
     return (
-        <section id="services" className="py-24 bg-white">
+        <section id="services" className="py-24 bg-white dark:bg-gray-900 transition-colors duration-300">
             <div className="container mx-auto px-6 max-w-6xl">
                 <div className="flex items-center gap-4 mb-16">
-                    <h2 className="text-4xl font-extrabold text-gray-900 uppercase tracking-tight whitespace-nowrap">
+                    <h2 className="text-4xl font-extrabold text-gray-900 dark:text-white uppercase tracking-tight whitespace-nowrap">
                         WHAT I&apos;M OFFERING
                     </h2>
-                    <div className="flex-grow h-[1px] bg-gray-200" />
+                    <div className="flex-grow h-[1px] bg-gray-200 dark:bg-gray-700" />
                 </div>
 
                 <motion.div
@@ -87,10 +87,10 @@ export default function Services() {
                                 variants={cardVariants}
                                 whileHover={{ y: -8, scale: 1.02 }}
                                 transition={{ type: "spring", stiffness: 300, damping: 20 }}
-                                className={`relative p-8 bg-white rounded-2xl border border-gray-100 ${item.shadowColor} shadow-lg hover:shadow-xl transition-all duration-300 group cursor-pointer h-full flex flex-col overflow-hidden border-l-4 ${item.borderColor}`}
+                                className={`relative p-8 bg-white dark:bg-gray-800 rounded-2xl border border-gray-100 dark:border-gray-700 ${item.shadowColor} shadow-lg hover:shadow-xl transition-all duration-300 group cursor-pointer h-full flex flex-col overflow-hidden border-l-4 ${item.borderColor}`}
                             >
                                 {/* Number label */}
-                                <span className="absolute top-5 right-5 text-5xl font-black text-gray-100/80 select-none leading-none">
+                                <span className="absolute top-5 right-5 text-5xl font-black text-gray-100/80 dark:text-gray-700/50 select-none leading-none">
                                     {item.num}
                                 </span>
 
@@ -102,12 +102,12 @@ export default function Services() {
                                 </div>
 
                                 {/* Title */}
-                                <h3 className="text-lg font-bold mb-3 text-gray-900 uppercase tracking-wide">
+                                <h3 className="text-lg font-bold mb-3 text-gray-900 dark:text-white uppercase tracking-wide">
                                     {item.title}
                                 </h3>
 
                                 {/* Description */}
-                                <p className="text-gray-500 mb-6 leading-relaxed text-sm flex-grow">
+                                <p className="text-gray-500 dark:text-gray-400 mb-6 leading-relaxed text-sm flex-grow">
                                     {item.description}
                                 </p>
 

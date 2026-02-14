@@ -70,10 +70,10 @@ export default async function ProjectDetailPage({ params }: ProjectPageProps) {
                                 href={project.live_url}
                                 target="_blank"
                                 rel="noopener noreferrer"
-                                className="inline-flex items-center gap-2 px-5 py-2.5 bg-blue-600 text-white font-semibold rounded-full hover:bg-blue-700 transition-colors"
+                                className="inline-flex items-center gap-2 px-6 py-3 bg-blue-600 text-white font-semibold rounded-full hover:bg-blue-700 transition-colors shadow-lg hover:shadow-blue-500/25"
                             >
-                                <Globe size={16} />
-                                Live Demo
+                                <Globe size={18} />
+                                View Live Site
                             </a>
                         )}
                         {project.github_url && (
@@ -81,9 +81,9 @@ export default async function ProjectDetailPage({ params }: ProjectPageProps) {
                                 href={project.github_url}
                                 target="_blank"
                                 rel="noopener noreferrer"
-                                className="inline-flex items-center gap-2 px-5 py-2.5 bg-white/10 text-white font-semibold rounded-full hover:bg-white/20 transition-colors border border-white/20"
+                                className="inline-flex items-center gap-2 px-6 py-3 bg-white/10 text-white font-semibold rounded-full hover:bg-white/20 transition-colors border border-white/20 backdrop-blur-sm"
                             >
-                                <Github size={16} />
+                                <Github size={18} />
                                 Source Code
                             </a>
                         )}
@@ -91,10 +91,10 @@ export default async function ProjectDetailPage({ params }: ProjectPageProps) {
                             <a
                                 href={project.apk_url}
                                 download
-                                className="inline-flex items-center gap-2 px-5 py-2.5 bg-emerald-600 text-white font-semibold rounded-full hover:bg-emerald-700 transition-colors"
+                                className="inline-flex items-center gap-2 px-6 py-3 bg-emerald-600 text-white font-semibold rounded-full hover:bg-emerald-700 transition-colors shadow-lg hover:shadow-emerald-500/25"
                             >
-                                <Download size={16} />
-                                Download APK
+                                <Download size={18} />
+                                Download APK File
                             </a>
                         )}
                     </div>
@@ -105,15 +105,15 @@ export default async function ProjectDetailPage({ params }: ProjectPageProps) {
             <div className="container mx-auto px-6 max-w-5xl py-12">
                 {/* Description */}
                 <div className="mb-12">
-                    <h2 className="text-2xl font-bold text-gray-900 mb-4">About This Project</h2>
-                    <p className="text-gray-600 leading-relaxed text-lg whitespace-pre-line">
+                    <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-4">About This Project</h2>
+                    <p className="text-gray-600 dark:text-gray-300 leading-relaxed text-lg whitespace-pre-line">
                         {project.description}
                     </p>
                 </div>
 
                 {/* Date */}
                 {project.created_at && (
-                    <div className="flex items-center gap-2 text-gray-400 text-sm mb-12">
+                    <div className="flex items-center gap-2 text-gray-400 dark:text-gray-500 text-sm mb-12">
                         <Calendar size={14} />
                         <span>Added on {new Date(project.created_at).toLocaleDateString("en-US", { year: "numeric", month: "long", day: "numeric" })}</span>
                     </div>
@@ -122,18 +122,21 @@ export default async function ProjectDetailPage({ params }: ProjectPageProps) {
                 {/* Screenshots Gallery */}
                 {screenshots.length > 0 && (
                     <div className="mb-12">
-                        <h2 className="text-2xl font-bold text-gray-900 mb-6">Screenshots</h2>
-                        <div className="grid md:grid-cols-2 gap-6">
+                        <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-6">Screenshots</h2>
+                        {/* Smaller grid: grid-cols-2 md:grid-cols-3 and limiting height/aspect */}
+                        <div className="grid grid-cols-2 md:grid-cols-3 gap-6">
                             {screenshots.map((src: string, index: number) => (
                                 <div
                                     key={index}
-                                    className="rounded-2xl overflow-hidden border border-gray-100 shadow-md hover:shadow-xl transition-shadow duration-300"
+                                    className="relative group rounded-xl overflow-hidden border border-gray-100 dark:border-gray-800 shadow-sm hover:shadow-md transition-all duration-300 aspect-[9/16] bg-gray-50 dark:bg-gray-800"
                                 >
                                     <img
                                         src={src}
                                         alt={`${project.title} screenshot ${index + 1}`}
-                                        className="w-full h-auto object-cover"
+                                        className="w-full h-full object-cover"
                                     />
+                                    {/* Overlay for "View" or just simple hover effect */}
+                                    <div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-colors" />
                                 </div>
                             ))}
                         </div>

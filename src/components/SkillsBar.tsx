@@ -17,7 +17,7 @@ const skills = [
 
 export default function SkillsBar() {
     return (
-        <div className="bg-gray-900 py-3 overflow-hidden rounded-full max-w-[480px] mx-auto mt-2">
+        <div className="bg-gray-900 dark:bg-gray-800 py-3 overflow-hidden rounded-full max-w-[480px] mx-auto mt-2 border border-transparent dark:border-gray-700 transition-colors duration-300">
             <motion.div
                 animate={{ x: [0, -800] }}
                 transition={{ repeat: Infinity, duration: 15, ease: "linear" }}

@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
-import { supabase } from "@/lib/supabase";
+import { supabase } from "@/lib/supabase-browser";
 import ProjectForm from "@/components/admin/ProjectForm";
 import { ArrowLeft } from "lucide-react";
 import Link from "next/link";

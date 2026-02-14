@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { supabase } from "@/lib/supabase";
+import { supabase } from "@/lib/supabase-browser";
 import { useRouter } from "next/navigation";
 import { Lock, Mail } from "lucide-react";
 

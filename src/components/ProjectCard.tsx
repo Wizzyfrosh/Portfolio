@@ -32,10 +32,10 @@ export default function ProjectCard({ project }: { project: Project }) {
             viewport={{ once: true }}
             whileHover={{ y: -6 }}
             transition={{ duration: 0.4 }}
-            className="bg-white rounded-2xl overflow-hidden shadow-md hover:shadow-xl transition-all duration-300 border border-gray-100 flex flex-col h-full group"
+            className="bg-white dark:bg-gray-800 rounded-2xl overflow-hidden shadow-md hover:shadow-xl transition-all duration-300 border border-gray-100 dark:border-gray-700 flex flex-col h-full group"
         >
             {/* Image */}
-            <div className="relative h-52 w-full overflow-hidden">
+            <div className="relative h-52 w-full overflow-hidden bg-gray-100 dark:bg-gray-700">
                 <img
                     src={screenshot}
                     alt={project.title}
@@ -45,8 +45,8 @@ export default function ProjectCard({ project }: { project: Project }) {
 
             {/* Content */}
             <div className="p-5 flex flex-col flex-grow">
-                <h3 className="text-lg font-bold text-gray-900 mb-1.5">{project.title}</h3>
-                <p className="text-gray-500 text-sm mb-4 line-clamp-2 flex-grow leading-relaxed">
+                <h3 className="text-lg font-bold text-gray-900 dark:text-white mb-1.5">{project.title}</h3>
+                <p className="text-gray-500 dark:text-gray-400 text-sm mb-4 line-clamp-2 flex-grow leading-relaxed">
                     {project.description}
                 </p>
 
@@ -55,13 +55,13 @@ export default function ProjectCard({ project }: { project: Project }) {
                     {visibleTags.map((tech, index) => (
                         <span
                             key={index}
-                            className="px-3 py-1 bg-gray-100 text-gray-600 text-xs font-medium rounded-full"
+                            className="px-3 py-1 bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300 text-xs font-medium rounded-full"
                         >
                             {tech}
                         </span>
                     ))}
                     {hiddenCount > 0 && (
-                        <span className="px-3 py-1 bg-gray-100 text-gray-500 text-xs font-medium rounded-full">
+                        <span className="px-3 py-1 bg-gray-100 dark:bg-gray-700 text-gray-500 dark:text-gray-400 text-xs font-medium rounded-full">
                             +{hiddenCount}
                         </span>
                     )}
@@ -71,7 +71,7 @@ export default function ProjectCard({ project }: { project: Project }) {
                 <div className="flex items-center gap-3 mt-auto">
                     <Link
                         href={`/projects/${project.id}`}
-                        className="px-5 py-2 bg-blue-600 text-white text-sm font-semibold rounded-full hover:bg-blue-700 transition-colors duration-200 flex items-center gap-1.5"
+                        className="px-5 py-2 bg-blue-600 text-white text-sm font-semibold rounded-full hover:bg-blue-700 transition-colors duration-200 flex items-center gap-1.5 shadow-md hover:shadow-blue-500/25"
                     >
                         <Eye size={14} />
                         View Details
@@ -82,7 +82,7 @@ export default function ProjectCard({ project }: { project: Project }) {
                             href={project.live_url}
                             target="_blank"
                             rel="noopener noreferrer"
-                            className="w-9 h-9 rounded-full border border-gray-200 flex items-center justify-center text-gray-400 hover:text-blue-600 hover:border-blue-300 transition-colors duration-200"
+                            className="w-9 h-9 rounded-full border border-gray-200 dark:border-gray-600 flex items-center justify-center text-gray-400 dark:text-gray-400 hover:text-blue-600 dark:hover:text-blue-400 hover:border-blue-300 dark:hover:border-blue-500 transition-colors duration-200"
                             title="Live Demo"
                         >
                             <ExternalLink size={15} />
@@ -94,7 +94,7 @@ export default function ProjectCard({ project }: { project: Project }) {
                             href={project.github_url}
                             target="_blank"
                             rel="noopener noreferrer"
-                            className="w-9 h-9 rounded-full border border-gray-200 flex items-center justify-center text-gray-400 hover:text-gray-900 hover:border-gray-400 transition-colors duration-200"
+                            className="w-9 h-9 rounded-full border border-gray-200 dark:border-gray-600 flex items-center justify-center text-gray-400 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white hover:border-gray-400 dark:hover:border-gray-400 transition-colors duration-200"
                             title="View Code"
                         >
                             <Github size={15} />

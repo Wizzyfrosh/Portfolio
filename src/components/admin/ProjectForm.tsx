@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { supabase } from "@/lib/supabase";
+import { supabase } from "@/lib/supabase-browser";
 import { Upload, X, Loader2 } from "lucide-react";
 import Image from "next/image";
 
@@ -27,9 +27,12 @@ export default function ProjectForm({ initialData }: ProjectFormProps) {
     const [screenshots, setScreenshots] = useState<string[]>(initialData?.screenshots || []);
     const [uploading, setUploading] = useState(false);
 
+    const [error, setError] = useState<string | null>(null);
+
     const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
         const { name, value } = e.target;
         setFormData((prev) => ({ ...prev, [name]: value }));
+        setError(null); // Clear error on change
     };
 
     const handleToggle = () => {
@@ -40,6 +43,7 @@ export default function ProjectForm({ initialData }: ProjectFormProps) {
         if (!e.target.files || e.target.files.length === 0) return;
 
         setUploading(true);
+        setError(null);
         const file = e.target.files[0];
         const fileExt = file.name.split(".").pop();
         const fileName = `${Date.now()}.${fileExt}`;
@@ -57,9 +61,9 @@ export default function ProjectForm({ initialData }: ProjectFormProps) {
             } else {
                 setFormData((prev) => ({ ...prev, apk_url: data.publicUrl }));
             }
-        } catch (error) {
+        } catch (error: any) {
             console.error("Error uploading file:", error);
-            alert("Error uploading file");
+            setError(error.message || "Error uploading file. Make sure storage buckets ('apks', 'screenshots') exist.");
         } finally {
             setUploading(false);
         }
@@ -68,6 +72,7 @@ export default function ProjectForm({ initialData }: ProjectFormProps) {
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         setLoading(true);
+        setError(null);
 
         const projectData = {
             title: formData.title,
@@ -81,24 +86,28 @@ export default function ProjectForm({ initialData }: ProjectFormProps) {
         };
 
         try {
+            const { data: { session } } = await supabase.auth.getSession();
+            if (!session) throw new Error("You must be logged in to save projects.");
+
+            let result;
             if (initialData) {
                 // Update
-                const { error } = await supabase
+                result = await supabase
                     .from("projects")
                     .update(projectData)
                     .eq("id", initialData.id);
-                if (error) throw error;
             } else {
                 // Insert
-                const { error } = await supabase.from("projects").insert([projectData]);
-                if (error) throw error;
+                result = await supabase.from("projects").insert([projectData]);
             }
+
+            if (result.error) throw result.error;
 
             router.push("/admin/dashboard");
             router.refresh();
-        } catch (error) {
+        } catch (error: any) {
             console.error("Error saving project:", error);
-            alert("Error saving project");
+            setError(error.message || "Error saving project. Check your permissions.");
         } finally {
             setLoading(false);
         }
@@ -108,6 +117,11 @@ export default function ProjectForm({ initialData }: ProjectFormProps) {
         <form onSubmit={handleSubmit} className="bg-white p-8 rounded-xl shadow-sm border border-gray-100 max-w-4xl mx-auto space-y-8">
 
             {/* Basic Info */}
+            {error && (
+                <div className="p-4 bg-red-50 border border-red-200 text-red-700 rounded-lg text-sm">
+                    <strong>Error:</strong> {error}
+                </div>
+            )}
             <div className="space-y-4">
                 <h3 className="text-xl font-bold text-gray-900 border-b pb-2">Project Details</h3>
 

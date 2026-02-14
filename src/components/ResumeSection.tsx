@@ -38,7 +38,7 @@ const education = [
     {
         degree: "Bachelor of Science in Computer Science",
         institution: "University",
-        year: "2020 - 2024",
+        year: "2021-2025",
     },
 ];
 
