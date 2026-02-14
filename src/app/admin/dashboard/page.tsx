@@ -15,6 +15,10 @@ export default function Dashboard() {
     }, []);
 
     const fetchProjects = async () => {
+        if (!supabase) {
+            setLoading(false);
+            return;
+        }
         const { data, error } = await supabase
             .from("projects")
             .select("*")

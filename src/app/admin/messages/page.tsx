@@ -24,6 +24,10 @@ export default function MessagesPage() {
     }, []);
 
     const fetchMessages = async () => {
+        if (!supabase) {
+            setLoading(false);
+            return;
+        }
         setLoading(true);
         try {
             const { data, error } = await supabase

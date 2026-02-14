@@ -14,6 +14,10 @@ export default function BlogListPage() {
     }, []);
 
     const fetchBlogs = async () => {
+        if (!supabase) {
+            setLoading(false);
+            return;
+        }
         const { data, error } = await supabase
             .from("blogs")
             .select("*")

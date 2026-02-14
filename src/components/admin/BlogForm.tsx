@@ -56,6 +56,7 @@ export default function BlogForm({ initialData }: BlogFormProps) {
         const filePath = `${fileName}`;
 
         try {
+            if (!supabase) throw new Error("Supabase client is not initialized.");
             const { error: uploadError } = await supabase.storage.from("blog-images").upload(filePath, file);
 
             if (uploadError) throw uploadError;
@@ -76,6 +77,7 @@ export default function BlogForm({ initialData }: BlogFormProps) {
         setError(null);
 
         try {
+            if (!supabase) throw new Error("Supabase client is not initialized.");
             const { data: { session } } = await supabase.auth.getSession();
             if (!session) throw new Error("Not authenticated");
 

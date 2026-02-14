@@ -14,6 +14,10 @@ export default function EditProjectPage() {
 
     useEffect(() => {
         const fetchProject = async () => {
+            if (!supabase) {
+                setLoading(false);
+                return;
+            }
             const { data, error } = await supabase
                 .from("projects")
                 .select("*")

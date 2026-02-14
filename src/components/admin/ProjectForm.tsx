@@ -50,6 +50,7 @@ export default function ProjectForm({ initialData }: ProjectFormProps) {
         const filePath = `${fileName}`;
 
         try {
+            if (!supabase) throw new Error("Supabase client is not initialized.");
             const { error: uploadError } = await supabase.storage.from(bucket).upload(filePath, file);
 
             if (uploadError) throw uploadError;
@@ -86,6 +87,7 @@ export default function ProjectForm({ initialData }: ProjectFormProps) {
         };
 
         try {
+            if (!supabase) throw new Error("Supabase client is not initialized.");
             const { data: { session } } = await supabase.auth.getSession();
             if (!session) throw new Error("You must be logged in to save projects.");
 

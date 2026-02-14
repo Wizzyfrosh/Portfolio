@@ -85,6 +85,10 @@ export default function ResumePage() {
 
     useEffect(() => {
         const fetchProfile = async () => {
+            if (!supabase) {
+                setLoading(false);
+                return;
+            }
             const { data } = await supabase.from("profiles").select("resume_url").limit(1).maybeSingle();
             if (data) setResumeUrl(data.resume_url);
             setLoading(false);

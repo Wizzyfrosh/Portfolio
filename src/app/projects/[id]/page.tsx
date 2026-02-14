@@ -11,6 +11,17 @@ interface ProjectPageProps {
 export default async function ProjectDetailPage({ params }: ProjectPageProps) {
     const { id } = await params;
 
+    if (!supabase) {
+        return (
+            <div className="min-h-screen flex items-center justify-center bg-white">
+                <div className="text-center">
+                    <h1 className="text-4xl font-bold text-gray-900 mb-4">Service Unavailable</h1>
+                    <p className="text-gray-500 mb-8">Database connection is not available.</p>
+                </div>
+            </div>
+        );
+    }
+
     const { data: project, error } = await supabase
         .from("projects")
         .select("*")

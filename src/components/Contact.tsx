@@ -28,6 +28,13 @@ export default function Contact() {
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
+
+        if (!supabase) {
+            setStatus("error");
+            setErrorMsg("Supabase client is not initialized. Please check your environment variables.");
+            return;
+        }
+
         setStatus("loading");
         setErrorMsg("");
 
