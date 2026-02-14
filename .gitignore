@@ -32,6 +32,7 @@ yarn-error.log*
 
 # env files (can opt-in for committing if needed)
 .env*
+.env
 
 # vercel
 .vercel
@@ -39,15 +40,26 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
-  
-# OS generated files  
-.DS_Store  
-Thumbs.db  
-# Editor directories  
-.idea  
-.vscode  
-*.suo  
-*.ntvs*  
-*.njsproj  
-*.sln  
-*.sw? 
+
+# OS generated files
+Thumbs.db
+.idea
+.vscode
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+
+# Nestjs specific (from remote)
+/dist
+/tmp
+
+# Logs (from remote)
+logs
+*.log
+lerna-debug.log*
+
+# temp directory (from remote)
+.temp
+.tmp
