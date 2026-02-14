@@ -1,0 +1,280 @@
+# Product Requirements Document (PRD)
+
+## Product Name
+
+**Dynamic Developer Portfolio Website**
+
+## Product Owner
+
+Web & Software Developer (Portfolio Owner)
+
+## Version
+
+v1.0
+
+## Overview
+
+This product is a **production-ready, dynamic portfolio website** for a Web & Software Developer. The website serves both as a professional personal brand and a proof of backend, software, and system design skills. It includes a **CMS-style admin dashboard** powered by Supabase that allows the owner to upload and manage projects (including APK files) without writing or modifying code.
+
+The system is designed to be scalable, secure, visually modern, and impressive to recruiters, employers, and clients.
+
+---
+
+## Goals & Objectives
+
+### Primary Goals
+
+* Showcase real-world web, backend, and software development projects
+* Allow project uploads without code changes
+* Demonstrate backend skills (auth, database, storage, security)
+* Impress recruiters with a production-grade system
+
+### Success Metrics
+
+* Projects can be added/updated without redeploying
+* APK files can be uploaded and downloaded successfully
+* Website loads fast and is fully responsive
+* Admin access is fully secured
+
+---
+
+## Target Audience
+
+### Primary Users
+
+* Recruiters
+* Hiring managers
+* Startup founders
+* Clients
+
+### Secondary Users
+
+* The developer (admin user)
+
+---
+
+## User Personas
+
+### Visitor (Public User)
+
+* Views portfolio
+* Browses projects
+* Downloads APK files
+* Visits live project websites
+* Contacts developer
+
+### Admin (Portfolio Owner)
+
+* Logs in securely
+* Uploads projects
+* Uploads APKs and screenshots
+* Publishes or unpublishes projects
+
+---
+
+## Functional Requirements
+
+### Public Website
+
+#### Hero Section
+
+* Large bold introduction text
+* Developer role: *Web & Software Developer*
+* Background-less PNG profile image
+* No borders or frames on image
+* Subtle shadow or glow only
+
+#### About Section
+
+* Short professional bio
+* Skills summary
+
+#### Services Section
+
+* Web Development
+* Backend Development
+* Software Development
+
+#### Projects Section
+
+* Dynamically fetched from Supabase
+* Each project displays:
+
+  * Title
+  * Description
+  * Tech stack
+  * Screenshots
+  * Download APK button
+  * Live website link
+  * GitHub link (optional)
+
+#### Contact Section
+
+* Email contact
+* Social links (GitHub, LinkedIn, etc.)
+
+---
+
+### Admin Dashboard
+
+#### Authentication
+
+* Email & password login (Supabase Auth)
+* Admin-only access
+
+#### Project Management
+
+* Add new project
+* Upload APK file
+* Upload multiple screenshots
+* Input fields:
+
+  * Project title
+  * Description
+  * Tech stack (array)
+  * Live URL
+  * GitHub URL
+* Publish / unpublish toggle
+
+#### Constraints
+
+* No public access to admin routes
+* No redeploy required after upload
+
+---
+
+## Non-Functional Requirements
+
+### Performance
+
+* Fast page loads
+* Optimized images
+* Efficient database queries
+
+### Security
+
+* Supabase Row Level Security (RLS)
+* Admin-only write access
+* Public read-only access
+
+### Scalability
+
+* Support future projects
+* Handle increased traffic
+* Easy feature expansion
+
+### Reliability
+
+* Proper error handling
+* Loading and empty states
+
+### Accessibility
+
+* Mobile responsive
+* Keyboard navigation support
+* Readable typography
+
+---
+
+## Technical Requirements
+
+### Frontend
+
+* Next.js (App Router)
+* TypeScript
+* Tailwind CSS
+* Framer Motion for animations
+
+### Backend
+
+* Supabase
+
+  * PostgreSQL database
+  * Auth
+  * Storage
+  * RLS policies
+
+### Storage Buckets
+
+* `apks`
+* `screenshots`
+* `profile`
+
+---
+
+## Database Schema
+
+### Projects Table
+
+* id (UUID, primary key)
+* title (text)
+* description (text)
+* tech_stack (text[])
+* apk_url (text)
+* live_url (text)
+* github_url (text)
+* screenshots (text[])
+* published (boolean)
+* created_at (timestamp)
+
+---
+
+## Animations & UX
+
+* Hero text entrance animation
+* Profile image fade-in
+* Section reveal on scroll
+* Project card hover animations
+* Smooth page transitions
+
+Animations must be subtle, professional, and performance-friendly.
+
+---
+
+## Deployment
+
+### Frontend
+
+* Vercel
+
+### Backend
+
+* Supabase Cloud
+
+### Environment Variables
+
+* Supabase URL
+* Supabase Anon Key
+* Supabase Service Role Key (admin only)
+
+---
+
+## Risks & Mitigations
+
+### Risk: Unauthorized uploads
+
+* Mitigation: Strict RLS policies
+
+### Risk: Large APK files
+
+* Mitigation: Storage size limits & validation
+
+### Risk: Poor performance
+
+* Mitigation: Image optimization & caching
+
+---
+
+## Future Enhancements
+
+* Analytics dashboard
+* Blog system
+* Dark mode
+* Multi-language support
+* Testimonials section
+
+---
+
+## Final Notes
+
+This product must be **production-ready**, not a demo. All project data must be dynamic, secure, and manageable via the admin dashboard. The final system should reflect advanced backend and system design skills.
