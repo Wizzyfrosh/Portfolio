@@ -3,11 +3,12 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { supabase } from "@/lib/supabase-browser";
-import { PlusCircle, Edit2, Trash2, Eye } from "lucide-react";
+import { PlusCircle, Edit2, Trash2, Search, BookOpen, Calendar } from "lucide-react";
 
 export default function BlogListPage() {
     const [blogs, setBlogs] = useState<any[]>([]);
     const [loading, setLoading] = useState(true);
+    const [searchTerm, setSearchTerm] = useState("");
 
     useEffect(() => {
         fetchBlogs();
@@ -39,65 +40,112 @@ export default function BlogListPage() {
         }
     };
 
-    if (loading) return <div className="text-center py-10">Loading...</div>;
+    const filteredBlogs = blogs.filter(blog =>
+        blog.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        blog.excerpt?.toLowerCase().includes(searchTerm.toLowerCase())
+    );
 
     return (
-        <div>
-            <div className="flex items-center justify-between mb-8">
-                <h1 className="text-3xl font-bold text-gray-800 dark:text-white">Blog Posts</h1>
+        <div className="space-y-6">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                <div>
+                    <h1 className="text-3xl font-bold text-gray-900">Blog Posts</h1>
+                    <p className="text-gray-500 mt-1">Write and manage your articles and development logs.</p>
+                </div>
                 <Link
                     href="/admin/blog/new"
-                    className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+                    className="flex items-center gap-2 px-6 py-3 bg-blue-600 text-white font-medium rounded-lg hover:bg-blue-700 transition-colors shadow-sm"
                 >
                     <PlusCircle size={20} />
                     New Post
                 </Link>
             </div>
 
-            <div className="bg-white dark:bg-gray-900 dark:border-gray-800 rounded-xl shadow-sm border border-gray-100 overflow-hidden">
-                <table className="w-full text-left">
-                    <thead className="bg-gray-50 dark:bg-gray-800 border-b border-gray-100 dark:border-gray-700">
-                        <tr>
-                            <th className="px-6 py-4 font-semibold text-gray-600 dark:text-gray-300">Title</th>
-                            <th className="px-6 py-4 font-semibold text-gray-600 dark:text-gray-300">Status</th>
-                            <th className="px-6 py-4 font-semibold text-gray-600 dark:text-gray-300 text-right">Actions</th>
-                        </tr>
-                    </thead>
-                    <tbody className="divide-y divide-gray-100 dark:divide-gray-800">
-                        {blogs.length === 0 ? (
-                            <tr>
-                                <td colSpan={3} className="px-6 py-8 text-center text-gray-500 dark:text-gray-400">
-                                    No blog posts found. Create one to get started!
-                                </td>
-                            </tr>
-                        ) : (
-                            blogs.map((blog) => (
-                                <tr key={blog.id} className="hover:bg-gray-50 dark:hover:bg-gray-800/50 transition-colors">
-                                    <td className="px-6 py-4">
-                                        <div className="font-medium text-gray-900 dark:text-white">{blog.title}</div>
-                                        <div className="text-sm text-gray-500 dark:text-gray-400 truncate max-w-xs">{blog.excerpt}</div>
-                                    </td>
-                                    <td className="px-6 py-4">
-                                        <span className={`px-3 py-1 rounded-full text-xs font-medium ${blog.published ? "bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400" : "bg-gray-100 text-gray-700 dark:bg-gray-700 dark:text-gray-300"}`}>
-                                            {blog.published ? "Published" : "Draft"}
-                                        </span>
-                                    </td>
-                                    <td className="px-6 py-4 text-right">
-                                        <div className="flex items-center justify-end gap-3">
-                                            <Link href={`/admin/blog/${blog.id}/edit`} className="p-2 text-gray-400 hover:text-blue-600 dark:hover:text-blue-400 transition-colors">
-                                                <Edit2 size={18} />
-                                            </Link>
-                                            <button onClick={() => handleDelete(blog.id)} className="p-2 text-gray-400 hover:text-red-600 dark:hover:text-red-400 transition-colors">
-                                                <Trash2 size={18} />
-                                            </button>
-                                        </div>
-                                    </td>
-                                </tr>
-                            ))
-                        )}
-                    </tbody>
-                </table>
+            <div className="flex flex-col md:flex-row gap-4">
+                <div className="relative flex-grow">
+                    <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" size={20} />
+                    <input
+                        type="text"
+                        placeholder="Search posts..."
+                        value={searchTerm}
+                        onChange={(e) => setSearchTerm(e.target.value)}
+                        className="pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 w-full"
+                    />
+                </div>
             </div>
+
+            {loading ? (
+                <div className="grid gap-4">
+                    {[1, 2, 3].map((i) => (
+                        <div key={i} className="bg-white p-6 rounded-xl border border-gray-200 shadow-sm animate-pulse h-24"></div>
+                    ))}
+                </div>
+            ) : filteredBlogs.length === 0 ? (
+                <div className="text-center py-20 bg-white rounded-xl border border-gray-200 shadow-sm">
+                    <p className="text-gray-500 text-lg">No blog posts found.</p>
+                </div>
+            ) : (
+                <div className="bg-white rounded-xl border border-gray-100 shadow-sm overflow-hidden">
+                    <div className="overflow-x-auto">
+                        <table className="w-full text-left">
+                            <thead className="bg-gray-50 border-b border-gray-100">
+                                <tr>
+                                    <th className="px-6 py-4 font-semibold text-gray-600">Article</th>
+                                    <th className="px-6 py-4 font-semibold text-gray-600">Date</th>
+                                    <th className="px-6 py-4 font-semibold text-gray-600">Status</th>
+                                    <th className="px-6 py-4 font-semibold text-gray-600 text-right">Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody className="divide-y divide-gray-100">
+                                {filteredBlogs.map((blog) => (
+                                    <tr key={blog.id} className="hover:bg-gray-50 transition-colors group">
+                                        <td className="px-6 py-4">
+                                            <div className="flex items-center gap-4">
+                                                <div className="w-12 h-12 bg-blue-50 text-blue-600 rounded-lg flex items-center justify-center flex-shrink-0">
+                                                    <BookOpen size={20} />
+                                                </div>
+                                                <div>
+                                                    <div className="font-bold text-gray-900 line-clamp-1">{blog.title}</div>
+                                                    <div className="text-xs text-gray-500 line-clamp-1 mt-0.5">{blog.excerpt}</div>
+                                                </div>
+                                            </div>
+                                        </td>
+                                        <td className="px-6 py-4">
+                                            <div className="flex items-center gap-2 text-sm text-gray-600">
+                                                <Calendar size={14} className="text-gray-400" />
+                                                {new Date(blog.created_at).toLocaleDateString()}
+                                            </div>
+                                        </td>
+                                        <td className="px-6 py-4">
+                                            <span className={`px-2.5 py-1 rounded-full text-xs font-semibold ${blog.published ? "bg-green-100 text-green-700" : "bg-gray-100 text-gray-700"}`}>
+                                                {blog.published ? "Published" : "Draft"}
+                                            </span>
+                                        </td>
+                                        <td className="px-6 py-4 text-right">
+                                            <div className="flex items-center justify-end gap-2">
+                                                <Link
+                                                    href={`/admin/blog/${blog.id}/edit`}
+                                                    className="p-2 text-gray-400 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-all"
+                                                    title="Edit"
+                                                >
+                                                    <Edit2 size={18} />
+                                                </Link>
+                                                <button
+                                                    onClick={() => handleDelete(blog.id)}
+                                                    className="p-2 text-gray-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-all"
+                                                    title="Delete"
+                                                >
+                                                    <Trash2 size={18} />
+                                                </button>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                ))}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            )}
         </div>
     );
 }

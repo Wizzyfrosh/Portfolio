@@ -22,6 +22,10 @@ export default function ProfilePage() {
     }, []);
 
     const fetchProfile = async () => {
+        if (!supabase) {
+            setLoading(false);
+            return;
+        }
         try {
             setLoading(true);
             const { data, error } = await supabase.from("profiles").select("*").limit(1).maybeSingle();
@@ -40,6 +44,10 @@ export default function ProfilePage() {
 
     const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
         if (!e.target.files || e.target.files.length === 0) return;
+        if (!supabase) {
+            setMessage({ type: "error", text: "Supabase client not initialized" });
+            return;
+        }
 
         setUploadingResume(true);
         setMessage(null);
@@ -67,6 +75,10 @@ export default function ProfilePage() {
 
     const handleSave = async (e: React.FormEvent) => {
         e.preventDefault();
+        if (!supabase) {
+            setMessage({ type: "error", text: "Supabase client not initialized" });
+            return;
+        }
         setSaving(true);
         setMessage(null);
 
@@ -127,8 +139,8 @@ export default function ProfilePage() {
                 {message && (
                     <div
                         className={`p-4 rounded-lg flex items-center gap-3 ${message.type === "success"
-                                ? "bg-green-50 text-green-700 dark:bg-green-900/20 dark:text-green-400"
-                                : "bg-red-50 text-red-700 dark:bg-red-900/20 dark:text-red-400"
+                            ? "bg-green-50 text-green-700 dark:bg-green-900/20 dark:text-green-400"
+                            : "bg-red-50 text-red-700 dark:bg-red-900/20 dark:text-red-400"
                             }`}
                     >
                         {message.type === "success" ? <CheckCircle size={20} /> : <Loader2 size={20} className="animate-spin" />}

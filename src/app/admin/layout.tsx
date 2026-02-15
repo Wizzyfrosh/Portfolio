@@ -15,6 +15,11 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
 
     // Check auth state change for robust redirection
     useEffect(() => {
+        if (!supabase) {
+            setLoading(false);
+            return;
+        }
+
         const checkSession = async () => {
             const { data: { session } } = await supabase.auth.getSession();
             if (!session && pathname !== "/admin/login") {
@@ -25,7 +30,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
 
         checkSession();
 
-        const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
+        const { data: { subscription } } = supabase.auth.onAuthStateChange((event: string, session: any) => {
             if (event === 'SIGNED_OUT' || (!session && pathname !== '/admin/login')) {
                 router.push('/admin/login');
             }
