@@ -1,3 +1,8 @@
+"use client";
+
+import { useState, useEffect } from "react";
+import Link from "next/link";
+import { supabase } from "@/lib/supabase-browser";
 import { PlusCircle, BookOpen, MessageSquare, Briefcase, ExternalLink, ArrowRight } from "lucide-react";
 
 export default function Dashboard() {
