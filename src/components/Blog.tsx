@@ -24,8 +24,13 @@ export default function Blog() {
                 .order("created_at", { ascending: false })
                 .limit(3);
 
-            if (data) setPosts(data);
+            if (data) {
+                console.log("Blog Component: fetched posts slugs:", data.map((p: any) => p.slug));
+
+                setPosts(data);
+            }
             setLoading(false);
+
         };
 
         fetchPosts();
@@ -58,41 +63,52 @@ export default function Blog() {
                     </div>
                 ) : (
                     <div className="grid md:grid-cols-3 gap-8">
-                        {posts.map((post, i) => (
-                            <motion.div
-                                key={post.id}
-                                initial={{ opacity: 0, y: 20 }}
-                                whileInView={{ opacity: 1, y: 0 }}
-                                viewport={{ once: true }}
-                                transition={{ delay: i * 0.1 }}
-                                className="bg-white dark:bg-gray-800 p-8 rounded-2xl border border-gray-100 dark:border-gray-700 shadow-sm hover:shadow-md transition-all group flex flex-col h-full"
-                            >
-                                {/* Cover Image? Optional */}
-                                {post.cover_image && (
-                                    <div className="mb-6 rounded-lg overflow-hidden h-40 bg-gray-100 dark:bg-gray-700">
-                                        <img src={post.cover_image} alt={post.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
-                                    </div>
-                                )}
+                        {posts.map((post, i) => {
+                            const isExternal = post.slug?.startsWith("http");
+                            const href = isExternal ? post.slug : `/blog/${post.slug}`;
+                            const target = isExternal ? "_blank" : "_self";
 
-                                <div className="flex-grow">
-                                    <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-3 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors line-clamp-2">
-                                        {post.title}
-                                    </h3>
-                                    <p className="text-gray-500 dark:text-gray-400 text-sm leading-relaxed mb-6 line-clamp-3">
-                                        {post.excerpt}
-                                    </p>
-                                </div>
-                                <div className="flex items-center justify-between border-t border-gray-100 dark:border-gray-700 pt-4 mt-auto">
-                                    <div className="flex items-center gap-2 text-xs font-medium text-gray-400 dark:text-gray-500">
-                                        <Calendar size={14} />
-                                        {new Date(post.created_at).toLocaleDateString()}
+                            return (
+                                <motion.div
+                                    key={post.id}
+                                    initial={{ opacity: 0, y: 20 }}
+                                    whileInView={{ opacity: 1, y: 0 }}
+                                    viewport={{ once: true }}
+                                    transition={{ delay: i * 0.1 }}
+                                    className="bg-white dark:bg-gray-800 p-8 rounded-2xl border border-gray-100 dark:border-gray-700 shadow-sm hover:shadow-md transition-all group flex flex-col h-full"
+                                >
+                                    {/* Cover Image */}
+                                    {post.cover_image && (
+                                        <Link href={href} target={target}>
+                                            <div className="mb-6 rounded-lg overflow-hidden h-40 bg-gray-100 dark:bg-gray-700">
+                                                <img src={post.cover_image} alt={post.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
+                                            </div>
+                                        </Link>
+                                    )}
+
+                                    <div className="flex-grow">
+                                        <Link href={href} target={target}>
+                                            <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-3 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors line-clamp-2 cursor-pointer">
+                                                {post.title}
+                                            </h3>
+                                        </Link>
+                                        <p className="text-gray-500 dark:text-gray-400 text-sm leading-relaxed mb-6 line-clamp-3">
+                                            {post.excerpt}
+                                        </p>
                                     </div>
-                                    <span className="text-blue-600 dark:text-blue-400 text-sm font-semibold flex items-center gap-1 group-hover:gap-2 transition-all">
-                                        Read <ArrowRight size={14} />
-                                    </span>
-                                </div>
-                            </motion.div>
-                        ))}
+                                    <div className="flex items-center justify-between border-t border-gray-100 dark:border-gray-700 pt-4 mt-auto">
+                                        <div className="flex items-center gap-2 text-xs font-medium text-gray-400 dark:text-gray-500">
+                                            <Calendar size={14} />
+                                            {new Date(post.created_at).toLocaleDateString()}
+                                        </div>
+                                        <Link href={href} target={target} className="text-blue-600 dark:text-blue-400 text-sm font-semibold flex items-center gap-1 group-hover:gap-2 transition-all">
+                                            Read <ArrowRight size={14} />
+                                        </Link>
+                                    </div>
+                                </motion.div>
+                            );
+                        })}
+
                     </div>
                 )}
             </div>

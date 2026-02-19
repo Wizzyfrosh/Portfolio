@@ -20,9 +20,11 @@ export default async function ProjectsSection() {
         .eq("published", true)
         .order("created_at", { ascending: false });
 
+    console.log("ProjectsSection: projects count:", projects?.length);
     if (error) {
         console.error("Error fetching projects:", error);
     }
+
 
     return (
         <section id="projects" className="py-20 bg-gray-50 dark:bg-gray-950 transition-colors duration-300">

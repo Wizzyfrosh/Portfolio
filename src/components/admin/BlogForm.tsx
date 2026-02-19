@@ -24,22 +24,34 @@ export default function BlogForm({ initialData }: BlogFormProps) {
         published: initialData?.published || false,
     });
 
+    const sanitizeSlug = (val: string) => {
+        return val
+            .toLowerCase()
+            .replace(/[^\w\s-]/g, "") // Remove all non-word chars (except spacing and hyphens)
+            .replace(/[\s_-]+/g, "-") // Replace spaces and underscores with a single hyphen
+            .replace(/^-+|-+$/g, ""); // Trim hyphens from start and end
+    };
+
     const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
         const { name, value } = e.target;
-        setFormData((prev) => ({ ...prev, [name]: value }));
+
+        if (name === "slug") {
+            setFormData((prev) => ({ ...prev, [name]: sanitizeSlug(value) }));
+        } else {
+            setFormData((prev) => ({ ...prev, [name]: value }));
+        }
+
         setError(null);
 
         // Auto-generate slug from title if slug is empty (only on create)
         if (name === "title" && !initialData) {
             setFormData((prev) => ({
                 ...prev,
-                slug: value
-                    .toLowerCase()
-                    .replace(/[^a-z0-9]+/g, "-")
-                    .replace(/(^-|-$)+/g, ""),
+                slug: sanitizeSlug(value),
             }));
         }
     };
+
 
     const handleToggle = () => {
         setFormData((prev) => ({ ...prev, published: !prev.published }));
