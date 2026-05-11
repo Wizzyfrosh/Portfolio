@@ -35,12 +35,14 @@ export default function ProjectCard({ project }: { project: Project }) {
             className="bg-white dark:bg-gray-800 rounded-2xl overflow-hidden shadow-md hover:shadow-xl transition-all duration-300 border border-gray-100 dark:border-gray-700 flex flex-col h-full group"
         >
             {/* Image */}
-            <div className="relative h-52 w-full overflow-hidden bg-gray-100 dark:bg-gray-700">
+            <div className="relative aspect-[16/10] w-full overflow-hidden bg-gray-100 dark:bg-gray-700">
                 <img
                     src={screenshot}
                     alt={project.title}
-                    className="object-cover w-full h-full group-hover:scale-105 transition-transform duration-500"
+                    className="object-cover object-top w-full h-full group-hover:scale-105 transition-transform duration-500"
                 />
+                {/* Gradient overlay for polish */}
+                <div className="absolute inset-0 bg-gradient-to-t from-black/10 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
             </div>
 
             {/* Content */}
