@@ -18,10 +18,6 @@ export default function About() {
                         scalable, efficient, and user-friendly applications. With a strong foundation in both frontend and backend technologies,
                         I bridge the gap between design and engineering.
                     </p>
-                    <p className="text-lg text-gray-600 dark:text-gray-400">
-                        My journey involves working with modern stacks like Next.js, Supabase, and PostgreSQL to deliver high-performance solutions.
-                        I love solving complex problems and turning ideas into clean code.
-                    </p>
                 </motion.div>
             </div>
         </section>
