@@ -1,7 +1,6 @@
 import ProjectCard from "./ProjectCard";
 import { supabase } from "@/lib/supabase";
 
-export const revalidate = 0;
 
 export default async function ProjectsSection() {
     if (!supabase) {

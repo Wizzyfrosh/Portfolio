@@ -135,18 +135,17 @@ export default async function ProjectDetailPage({ params }: ProjectPageProps) {
                     <div className="mb-12">
                         <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-6">Screenshots</h2>
                         {/* Smaller grid: grid-cols-2 md:grid-cols-3 and limiting height/aspect */}
-                        <div className="grid grid-cols-2 md:grid-cols-3 gap-6">
+                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                             {screenshots.map((src: string, index: number) => (
                                 <div
                                     key={index}
-                                    className="relative group rounded-xl overflow-hidden border border-gray-100 dark:border-gray-800 shadow-sm hover:shadow-md transition-all duration-300 aspect-[9/16] bg-gray-50 dark:bg-gray-800"
+                                    className="relative group rounded-xl overflow-hidden border border-gray-100 dark:border-gray-800 shadow-sm hover:shadow-md transition-all duration-300 bg-gray-50 dark:bg-gray-800 flex items-center justify-center"
                                 >
                                     <img
                                         src={src}
                                         alt={`${project.title} screenshot ${index + 1}`}
-                                        className="w-full h-full object-cover"
+                                        className="w-full h-auto"
                                     />
-                                    {/* Overlay for "View" or just simple hover effect */}
                                     <div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-colors" />
                                 </div>
                             ))}

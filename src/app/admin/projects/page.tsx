@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import { supabase } from "@/lib/supabase-browser";
 import { PlusCircle, Edit2, Trash2, Search, ExternalLink } from "lucide-react";
+import { revalidateProjects } from "@/app/actions/projects";
 
 export default function ProjectsPage() {
     const [projects, setProjects] = useState<any[]>([]);
@@ -37,6 +38,7 @@ export default function ProjectsPage() {
             alert("Error deleting project");
             console.error(error);
         } else {
+            await revalidateProjects();
             fetchProjects();
         }
     };

@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { supabase } from "@/lib/supabase-browser";
 import { Upload, X, Loader2 } from "lucide-react";
 import Image from "next/image";
+import { revalidateProjects } from "@/app/actions/projects";
 
 interface ProjectFormProps {
     initialData?: any; // If provided, we are editing
@@ -104,6 +105,8 @@ export default function ProjectForm({ initialData }: ProjectFormProps) {
             }
 
             if (result.error) throw result.error;
+
+            await revalidateProjects();
 
             router.push("/admin/dashboard");
             router.refresh();
