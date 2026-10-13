@@ -22,7 +22,8 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     return pages;
   }
 
-  const projectPages: MetadataRoute.Sitemap = (projects ?? []).map((project) => ({
+  type SitemapProject = { id: string | number; created_at: string | null };
+  const projectPages: MetadataRoute.Sitemap = ((projects ?? []) as SitemapProject[]).map((project: SitemapProject) => ({
     url: `${baseUrl}/projects/${encodeURIComponent(String(project.id))}`,
     ...(project.created_at && !Number.isNaN(new Date(project.created_at).getTime())
       ? { lastModified: new Date(project.created_at) }
