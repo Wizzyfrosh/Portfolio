@@ -1,11 +1,35 @@
 import { supabase } from "@/lib/supabase";
 import Link from "next/link";
+import type { Metadata } from "next";
+import { notFound } from "next/navigation";
 import { ArrowLeft, Github, Globe, Download, Calendar } from "lucide-react";
 
 export const revalidate = 0;
 
 interface ProjectPageProps {
     params: Promise<{ id: string }>;
+}
+
+const siteUrl = "https://www.froshcodeorbit.site";
+
+export async function generateMetadata({ params }: ProjectPageProps): Promise<Metadata> {
+    const { id } = await params;
+    if (!supabase) return { title: "Project unavailable", robots: { index: false } };
+    const { data: project } = await supabase.from("projects")
+        .select("title, description, screenshots").eq("id", id).eq("published", true).maybeSingle();
+    if (!project) return { title: "Project not found", robots: { index: false } };
+    const canonical = `${siteUrl}/projects/${encodeURIComponent(id)}`;
+    const description = String(project.description || "Explore this software development project by Frosh CodeOrbit.").slice(0, 160);
+    const images: string[] = Array.isArray(project.screenshots)
+        ? project.screenshots.filter((image: unknown): image is string => typeof image === "string" && image.startsWith("https://")).slice(0, 1)
+        : [];
+    return {
+        title: project.title,
+        description,
+        alternates: { canonical },
+        openGraph: { title: project.title, description, url: canonical, type: "article", ...(images.length ? { images } : {}) },
+        twitter: { card: images.length ? "summary_large_image" : "summary", title: project.title, description, ...(images.length ? { images } : {}) },
+    };
 }
 
 export default async function ProjectDetailPage({ params }: ProjectPageProps) {
@@ -26,24 +50,10 @@ export default async function ProjectDetailPage({ params }: ProjectPageProps) {
         .from("projects")
         .select("*")
         .eq("id", id)
+        .eq("published", true)
         .single();
 
-    if (error || !project) {
-        return (
-            <div className="min-h-screen flex items-center justify-center bg-white">
-                <div className="text-center">
-                    <h1 className="text-4xl font-bold text-gray-900 mb-4">Project Not Found</h1>
-                    <p className="text-gray-500 mb-8">The project you&apos;re looking for doesn&apos;t exist.</p>
-                    <Link
-                        href="/#projects"
-                        className="px-6 py-3 bg-blue-600 text-white font-semibold rounded-full hover:bg-blue-700 transition-colors"
-                    >
-                        Back to Projects
-                    </Link>
-                </div>
-            </div>
-        );
-    }
+    if (error || !project) notFound();
 
     const screenshots = project.screenshots || [];
 
