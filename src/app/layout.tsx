@@ -6,7 +6,7 @@ import "./globals.css";
 const outfit = Outfit({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  metadataBase: new URL("https://your-domain.com"), // Update with your actual domain
+  metadataBase: new URL("https://www.froshcodeorbit.site"),
   title: {
     default: "Frosh CodeOrbit | Web & Software Developer",
     template: "%s | Frosh CodeOrbit",
@@ -18,7 +18,7 @@ export const metadata: Metadata = {
   openGraph: {
     type: "website",
     locale: "en_US",
-    url: "https://your-domain.com",
+    url: "https://www.froshcodeorbit.site",
     title: "Frosh CodeOrbit | Web & Software Developer",
     description: "Professional portfolio of Umanor Wisdom - Full-Stack Web & Software Developer.",
     siteName: "Frosh CodeOrbit",
