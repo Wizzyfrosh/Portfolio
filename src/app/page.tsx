@@ -8,9 +8,34 @@ import Contact from "@/components/Contact";
 import Footer from "@/components/Footer";
 import SplashWrapper from "@/components/SplashWrapper";
 
+const structuredData = {
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "WebSite",
+      "@id": "https://www.froshcodeorbit.site/#website",
+      url: "https://www.froshcodeorbit.site/",
+      name: "Frosh CodeOrbit",
+      description: "Portfolio showcasing web and software development projects.",
+      inLanguage: "en",
+    },
+    {
+      "@type": "Person",
+      "@id": "https://www.froshcodeorbit.site/#person",
+      name: "Umanor Wisdom",
+      alternateName: "WizzyFrosh",
+      url: "https://www.froshcodeorbit.site/",
+      jobTitle: "Web and Software Developer",
+      knowsAbout: ["Web development", "React", "Next.js", "Software development"],
+    },
+  ],
+};
+
 export default function Home() {
   return (
-    <SplashWrapper>
+    <>
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData) }} />
+      <SplashWrapper>
       <main className="flex flex-col min-h-screen">
         <Navbar />
         <Hero />
@@ -23,6 +48,7 @@ export default function Home() {
         <Contact />
         <Footer />
       </main>
-    </SplashWrapper>
+      </SplashWrapper>
+    </>
   );
 }
