@@ -3,6 +3,7 @@
 import { ReactNode } from "react";
 import SplashScreen, { useSplashScreen } from "@/components/SplashScreen";
 import { AnimatePresence, motion } from "framer-motion";
+import { LoaderCircle } from "lucide-react";
 
 interface SplashWrapperProps {
   children: ReactNode;
@@ -14,10 +15,10 @@ export default function SplashWrapper({ children }: SplashWrapperProps) {
   // Prevent layout shift — render solid bg until we know splash state
   if (!isReady) {
     return (
-      <div
-        className="fixed inset-0 z-[9999]"
-        style={{ background: "#0a0a0f" }}
-      />
+      <div className="fixed inset-0 z-[9999] flex items-center justify-center bg-[#0a0a0f]" role="status" aria-label="Loading portfolio">
+        <LoaderCircle className="h-9 w-9 animate-spin text-blue-400" aria-hidden="true" />
+        <span className="sr-only">Loading portfolio</span>
+      </div>
     );
   }
 
