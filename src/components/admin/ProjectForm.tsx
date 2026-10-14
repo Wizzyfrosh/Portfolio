@@ -23,6 +23,10 @@ export default function ProjectForm({ initialData }: ProjectFormProps) {
         github_url: initialData?.github_url || "",
         apk_url: initialData?.apk_url || "",
         published: initialData?.published || false,
+        case_study_challenge: initialData?.case_study_challenge || "",
+        case_study_solution: initialData?.case_study_solution || "",
+        case_study_process: initialData?.case_study_process || "",
+        case_study_results: initialData?.case_study_results || "",
     });
 
     const [screenshots, setScreenshots] = useState<string[]>(initialData?.screenshots || []);
@@ -84,6 +88,10 @@ export default function ProjectForm({ initialData }: ProjectFormProps) {
             github_url: formData.github_url || null,
             apk_url: formData.apk_url || null,
             published: formData.published,
+            case_study_challenge: formData.case_study_challenge,
+            case_study_solution: formData.case_study_solution,
+            case_study_process: formData.case_study_process,
+            case_study_results: formData.case_study_results,
             screenshots: screenshots,
         };
 
@@ -189,6 +197,24 @@ export default function ProjectForm({ initialData }: ProjectFormProps) {
                         />
                     </div>
                 </div>
+            </div>
+
+            {/* Editable project case study */}
+            <div className="space-y-4">
+                <h3 className="text-xl font-bold text-gray-900 border-b pb-2">Case Study (Optional)</h3>
+                <p className="text-sm text-gray-500">Add the project's real story. Leave empty for regular portfolio projects.</p>
+                {([
+                    ["case_study_challenge", "The Challenge"],
+                    ["case_study_solution", "The Solution"],
+                    ["case_study_process", "Development Process"],
+                    ["case_study_results", "Results & Impact"],
+                ] as const).map(([name, label]) => (
+                    <div key={name}>
+                        <label htmlFor={name} className="block text-sm font-medium text-gray-700 mb-1">{label}</label>
+                        <textarea id={name} name={name} value={formData[name]} onChange={handleChange}
+                            rows={4} maxLength={10000} className="w-full px-4 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none resize-none" />
+                    </div>
+                ))}
             </div>
 
             {/* Media Uploads */}
