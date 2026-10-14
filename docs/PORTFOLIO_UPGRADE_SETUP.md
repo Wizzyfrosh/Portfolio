@@ -28,7 +28,6 @@ Set these in Vercel Settings → Environment Variables, separately for Preview a
 - `NEXT_PUBLIC_SUPABASE_ANON_KEY` (existing)
 - `SUPABASE_SERVICE_ROLE_KEY` (SECRET; obtain from Supabase project dashboard; **never expose in client code or GitHub**)
 - `PAYSTACK_SECRET_KEY` (SECRET; start with Paystack test secret key; do not place in `NEXT_PUBLIC_` variables)
-- `NEXT_PUBLIC_SITE_URL` = canonical production website URL when going live, or preview URL for a controlled checkout test.
 
 Use Paystack test mode first. Never enter live keys until test purchases and private delivery work end-to-end. The storefront can render without keys but checkout responds with unavailable.
 
