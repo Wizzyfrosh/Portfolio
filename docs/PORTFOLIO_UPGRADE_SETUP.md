@@ -10,15 +10,18 @@
 - Website template store: `/store`, `/store/[slug]`, `/store/complete` and admin pages `/admin/templates`, `/admin/templates/new`, `/admin/templates/[id]/edit`.
 - Paystack server-only checkout / verify endpoints. A valid payment and matched reference/email/amount/currency are required before a **120-second signed download link** is issued. ZIP files are private.
 
-## REQUIRED: Supabase SQL
+## Supabase migrations: applied and verified on 14 October 2026
 
-Run these **in order** in your existing Supabase project's SQL Editor:
+These changes have already been applied to **My Portfolio Website** in Supabase (project ref `tbrizmndydegsykqtnwj`). Do not re-run them as a routine deployment step:
 
-1. `migrations/20261014_project_case_studies.sql`
-2. `migrations/20261014_resume_storage_fix.sql`
-3. `migrations/20261014_template_marketplace.sql`
+1. Four optional case study columns on `public.projects`.
+2. Missing authenticated INSERT and UPDATE permissions on `public.profiles` (existing `profile` bucket and storage permissions were preserved).
+3. `public.website_templates`, `public.template_orders`, and private `template-files` storage bucket.
+4. `migrations/20261014_portfolio_admin_hardening.sql`: a `portfolio_admins` registry containing the single existing auth user, plus an owner-only permission check for profile writes, template management, and template ZIP access.
 
-All are additive/idempotent where practical. Confirm existing admin login, published projects, blog posts, and PDF uploads still work.
+Database verification after the changes: 7 existing projects, 1 existing profile, 0 templates, 0 orders. Public files and prior project records were not deleted.
+
+**Note:** The previous `20261014_resume_storage_fix.sql` in this branch is a reference migration, but the actual database update was narrower: only missing profile-table write permissions were added, since the bucket and storage policies were already present. The subsequent admin-hardening migration replaced those broad profile write permissions with owner-only permissions.
 
 ## REQUIRED: Vercel Environment Variables
 
@@ -50,4 +53,8 @@ Use Paystack test mode first. Never enter live keys until test purchases and pri
 - Paystack verification is implemented using the official `transaction/verify/:reference` endpoint. Customers must return to the completion page and verify to get the file. A future enhancement can add a signed webhook plus transactional email delivery and order-management.
 - The public template catalog is separate from client case studies, preventing accidentally listing client-owned projects as downloadable merchandise.
 - Your prior draft Meta catalog PR #5 remains independent and is not included here.
-- For stronger administration security, consider restricting Supabase project/template mutation policies to a specific admin UID instead of the existing all-authenticated-user convention.
+- Template and profile mutations are now restricted to the existing portfolio admin account. Legacy project and blog policies still use their existing authenticated-user convention; audit those separately before adding any additional auth users.
+
+## Vercel access limitation (current)
+
+The connected Vercel integration returned an authorization error for environment-variable metadata on the `froshcodeorbit` project. Complete secret configuration manually through the Vercel dashboard. Do not paste private keys into ChatGPT, GitHub, screenshots, or public issue comments. The test payment flow has **not** been executed or validated yet.
