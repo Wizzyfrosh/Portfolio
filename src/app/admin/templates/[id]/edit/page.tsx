@@ -11,7 +11,7 @@ export default function EditTemplatePage({ params }: { params: Promise<{ id: str
   useEffect(() => {
     if (!supabase) return;
     supabase.from("website_templates").select("*").eq("id", id).maybeSingle()
-      .then(({ data, error }) => { if (error) setError(error.message); else setRecord(data); });
+      .then(({ data, error }: { data: any; error: { message: string } | null }) => { if (error) setError(error.message); else setRecord(data); });
   }, [id]);
   if (error) return <p className="text-red-600">{error}</p>;
   return record ? <TemplateForm initialData={record} /> : <p className="text-gray-500">Loading template...</p>;
