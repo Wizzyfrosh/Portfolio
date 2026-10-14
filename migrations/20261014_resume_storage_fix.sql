@@ -1,11 +1,10 @@
 -- Check that public.profiles exists (schema_v2.sql). Apply in Supabase SQL Editor.
 -- Idempotent setup for admin PDF uploads and public PDF access.
-insert into storage.buckets (id, name, public, file_size_limit, allowed_mime_types)
-values ('profile', 'profile', true, 10485760, array['application/pdf'])
-on conflict (id) do update set
-  public = true,
-  file_size_limit = 10485760,
-  allowed_mime_types = array['application/pdf'];
+insert into storage.buckets (id, name, public)
+values ('profile', 'profile', true)
+on conflict (id) do update set public = true;
+-- Keep any existing size and MIME restrictions unchanged to avoid breaking
+-- other profile uploads; PDF size is validated by the admin form.
 drop policy if exists "Resume public read" on storage.objects;
 create policy "Resume public read" on storage.objects
   for select to anon, authenticated using (bucket_id = 'profile');
