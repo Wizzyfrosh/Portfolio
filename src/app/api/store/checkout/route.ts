@@ -18,8 +18,7 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: "Template unavailable" }, { status: 404 });
     }
     const reference = "frosh_" + randomUUID().replace(/-/g, "");
-    const origin = process.env.NEXT_PUBLIC_SITE_URL || "https://www.froshcodeorbit.site";
-    const callback_url = new URL("/store/complete", origin).toString();
+    const callback_url = new URL("/store/complete", request.nextUrl.origin).toString();
     const paystack = await fetch("https://api.paystack.co/transaction/initialize", {
       method: "POST",
       headers: {
