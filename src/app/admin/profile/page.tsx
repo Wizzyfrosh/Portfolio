@@ -52,19 +52,31 @@ export default function ProfilePage() {
         setUploadingResume(true);
         setMessage(null);
         const file = e.target.files[0];
-        const fileExt = file.name.split(".").pop();
+        if (!file.name.toLowerCase().endsWith(".pdf") || file.size > 10 * 1024 * 1024) {
+            setMessage({ type: "error", text: "Please choose a PDF no larger than 10 MB." });
+            return;
+        }
+        const fileExt = "pdf";
         const fileName = `resume_${Date.now()}.${fileExt}`;
         const filePath = `${fileName}`;
 
         try {
-            const { error: uploadError } = await supabase.storage.from("profile").upload(filePath, file);
+            const { data: { session } } = await supabase.auth.getSession();
+            if (!session) throw new Error("Log in before uploading.");
+            const { error: uploadError } = await supabase.storage.from("profile").upload(filePath, file, { contentType: "application/pdf" });
 
             if (uploadError) throw uploadError;
 
             const { data } = supabase.storage.from("profile").getPublicUrl(filePath);
 
-            setProfile((prev: any) => ({ ...prev, resume_url: data.publicUrl }));
-            setMessage({ type: "success", text: "Resume uploaded! Don't forget to save changes." });
+            const { data: existing, error: readError } = await supabase.from("profiles").select("id").limit(1).maybeSingle();
+            if (readError) throw readError;
+            const saved = existing?.id
+                ? await supabase.from("profiles").update({ resume_url: data.publicUrl }).eq("id", existing.id).select().single()
+                : await supabase.from("profiles").insert({ resume_url: data.publicUrl }).select().single();
+            if (saved.error) throw saved.error;
+            setProfile((prev: any) => ({ ...prev, ...saved.data }));
+            setMessage({ type: "success", text: "Resume uploaded and saved successfully." });
         } catch (error: any) {
             console.error("Error uploading resume:", error);
             setMessage({ type: "error", text: error.message || "Error uploading resume. Check 'profile' bucket." });
