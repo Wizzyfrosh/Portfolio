@@ -12,7 +12,7 @@ export default function AdminTemplates() {
   useEffect(() => {
     if (!supabase) return;
     supabase.from("website_templates").select("id,title,slug,price_kobo,published")
-      .order("created_at", { ascending: false }).then(({ data, error }) => {
+      .order("created_at", { ascending: false }).then(({ data, error }: { data: Template[] | null; error: { message: string } | null }) => {
         if (error) setError(error.message);
         else setItems(data || []);
       });
