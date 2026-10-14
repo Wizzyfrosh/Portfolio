@@ -61,7 +61,7 @@ export default function ResumeSection() {
     const [resumeUrl, setResumeUrl] = useState<string | null>(null);
     useEffect(() => {
         if (!supabase) return;
-        supabase.from("profiles").select("resume_url").limit(1).maybeSingle().then(({ data }) => {
+        supabase.from("profiles").select("resume_url").limit(1).maybeSingle().then(({ data }: { data: { resume_url: string | null } | null }) => {
             const url = data?.resume_url;
             if (typeof url === "string" && url.startsWith("https://")) setResumeUrl(url);
         });
