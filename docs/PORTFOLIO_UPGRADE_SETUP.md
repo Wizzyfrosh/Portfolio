@@ -58,3 +58,9 @@ Use Paystack test mode first. Never enter live keys until test purchases and pri
 ## Vercel access limitation (current)
 
 The connected Vercel integration returned an authorization error for environment-variable metadata on the `froshcodeorbit` project. Complete secret configuration manually through the Vercel dashboard. Do not paste private keys into ChatGPT, GitHub, screenshots, or public issue comments. The test payment flow has **not** been executed or validated yet.
+
+## 2026-10-14 Database migration status
+
+Applied in Supabase **My Portfolio Website** (`tbrizmndydegsykqtnwj`): case-study fields, portfolio resume profile write policies (using existing working `profile` storage bucket rather than recreating it), marketplace tables/private bucket, and owner-only admin hardening. Verified 7 projects, 1 profile, 1 admin; 0 templates or orders. Do **not** rerun `20261014_resume_storage_fix.sql` as-is: the live environment needed a different, less disruptive change to `profiles` insert/update RLS. The checked-in hardening migration includes the final access policies. For later new installations, use a tailored migration sequence.
+
+Vercel environment metadata access returned 403 for the connected scope. Paystack test secret and Supabase service role key need to be configured in the owner-controlled Vercel dashboard and test purchases verified before PR merge.
