@@ -1,6 +1,8 @@
 "use client";
 
 import { motion } from "framer-motion";
+import { useEffect, useState } from "react";
+import { supabase } from "@/lib/supabase-browser";
 import { Download, GraduationCap, Briefcase, Award, Code2, Database, Globe, Layers } from "lucide-react";
 
 const highlights = [
@@ -56,6 +58,14 @@ const itemVariants = {
 };
 
 export default function ResumeSection() {
+    const [resumeUrl, setResumeUrl] = useState<string | null>(null);
+    useEffect(() => {
+        if (!supabase) return;
+        supabase.from("profiles").select("resume_url").limit(1).maybeSingle().then(({ data }: { data: { resume_url: string | null } | null }) => {
+            const url = data?.resume_url;
+            if (typeof url === "string" && url.startsWith("https://")) setResumeUrl(url);
+        });
+    }, []);
     return (
         <section id="resume" className="py-24 bg-gray-50">
             <div className="container mx-auto px-6 max-w-6xl">
@@ -78,12 +88,11 @@ export default function ResumeSection() {
                         <p className="text-gray-400 text-sm">Get a copy of my full resume in PDF format</p>
                     </div>
                     <a
-                        href="/resume.pdf"
-                        download
+                        href={resumeUrl || "/resume"}
                         className="inline-flex items-center gap-2 px-6 py-3 bg-blue-600 text-white font-bold rounded-full hover:bg-blue-700 hover:shadow-lg hover:shadow-blue-500/25 transition-all duration-300"
                     >
                         <Download size={18} />
-                        Download PDF
+                        {resumeUrl ? "Download PDF" : "View Resume"}
                     </a>
                 </motion.div>
 

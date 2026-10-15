@@ -120,6 +120,12 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
                         <PlusCircle size={20} />
                         Add Project
                     </Link>
+                    <Link href="/admin/templates" onClick={() => setMobileMenuOpen(false)}
+                        className={cn("flex items-center gap-3 px-4 py-3 rounded-lg transition-colors font-medium",
+                          pathname.startsWith("/admin/templates") ? "bg-blue-50 text-blue-600" : "text-gray-600 hover:bg-gray-50 hover:text-gray-900")}>
+                        <FileText size={20} />
+                        Website Templates
+                    </Link>
                     <Link
                         href="/admin/blog"
                         onClick={() => setMobileMenuOpen(false)}

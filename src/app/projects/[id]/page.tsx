@@ -132,6 +132,19 @@ export default async function ProjectDetailPage({ params }: ProjectPageProps) {
                     </p>
                 </div>
 
+                {/* Editable case study sections: only show fields populated by admin */}
+                {([
+                    ["The Challenge", project.case_study_challenge],
+                    ["The Solution", project.case_study_solution],
+                    ["Development Process", project.case_study_process],
+                    ["Results & Impact", project.case_study_results],
+                ] as [string, string | null][]).filter(([, content]) => Boolean(content)).map(([heading, content]) => (
+                    <section key={heading} className="mb-10">
+                        <h2 className="text-2xl font-bold text-gray-900 mb-4">{heading}</h2>
+                        <p className="text-gray-600 leading-relaxed text-lg whitespace-pre-line">{content}</p>
+                    </section>
+                ))}
+
                 {/* Date */}
                 {project.created_at && (
                     <div className="flex items-center gap-2 text-gray-400 dark:text-gray-500 text-sm mb-12">

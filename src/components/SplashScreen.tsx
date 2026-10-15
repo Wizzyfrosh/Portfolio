@@ -424,12 +424,21 @@ function SplashParticles() {
 
 /* ─── Hook to manage splash visibility ─── */
 export function useSplashScreen() {
-  const [showSplash, setShowSplash] = useState(true);
+  const [showSplash, setShowSplash] = useState(false);
   const [isReady, setIsReady] = useState(false);
 
   useEffect(() => {
-    // Always show splash on page load / refresh
-    setShowSplash(true);
+    // A first-visit introduction, remembered across refreshes and return visits.
+    // If storage is unavailable, prefer showing content rather than blocking users.
+    try {
+      const seen = window.localStorage.getItem("froshcodeorbit_splash_seen_v1");
+      if (!seen) {
+        window.localStorage.setItem("froshcodeorbit_splash_seen_v1", "1");
+        setShowSplash(true);
+      }
+    } catch {
+      // Browsers may block localStorage in private or restricted contexts.
+    }
     setIsReady(true);
   }, []);
 
