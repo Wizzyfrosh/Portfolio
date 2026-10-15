@@ -14,7 +14,7 @@ export async function POST(request: NextRequest) {
     }
     // Email is required for recovery, but is NOT sufficient on its own to authorize delivery.
     // Confirm the transaction with Paystack and match all order details.
-    const result = await confirmPurchase(reference);
+    const result = await confirmPurchase(reference, email);
     if ("error" in result) return NextResponse.json({ error: result.error }, { status: result.status });
     if (result.order.email !== email) return NextResponse.json({ error: "Order not found" }, { status: 404 });
     const { data: template } = await result.db.from("website_templates").select("file_path")
