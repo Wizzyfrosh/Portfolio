@@ -8,11 +8,13 @@ export default function ProfilePage() {
     const [loading, setLoading] = useState(true);
     const [saving, setSaving] = useState(false);
     const [uploadingResume, setUploadingResume] = useState(false);
+    const [uploadingHero, setUploadingHero] = useState(false);
     const [message, setMessage] = useState<{ type: "success" | "error"; text: string } | null>(null);
 
     const [profile, setProfile] = useState<any>({
         id: null,
         resume_url: "",
+        hero_image_url: "",
         bio: "",
         email: "",
     });
@@ -49,13 +51,13 @@ export default function ProfilePage() {
             return;
         }
 
-        setUploadingResume(true);
         setMessage(null);
         const file = e.target.files[0];
         if (!file.name.toLowerCase().endsWith(".pdf") || file.size > 10 * 1024 * 1024) {
             setMessage({ type: "error", text: "Please choose a PDF no larger than 10 MB." });
             return;
         }
+        setUploadingResume(true);
         const fileExt = "pdf";
         const fileName = `resume_${Date.now()}.${fileExt}`;
         const filePath = `${fileName}`;
@@ -85,6 +87,35 @@ export default function ProfilePage() {
         }
     };
 
+    const handleHeroUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+        const file = e.target.files?.[0];
+        if (!file || !supabase) return;
+        if (!["image/png", "image/jpeg", "image/webp"].includes(file.type) || file.size > 5 * 1024 * 1024) {
+            setMessage({ type: "error", text: "Choose a PNG, JPG or WebP image under 5 MB." });
+            return;
+        }
+        setUploadingHero(true); setMessage(null);
+        try {
+            const { data: { session } } = await supabase.auth.getSession();
+            if (!session) throw new Error("Sign in to change your hero photo.");
+            const ext = file.type === "image/png" ? "png" : file.type === "image/webp" ? "webp" : "jpg";
+            const path = `hero/${crypto.randomUUID()}.${ext}`;
+            const uploaded = await supabase.storage.from("profile").upload(path, file, { contentType: file.type, upsert: false });
+            if (uploaded.error) throw uploaded.error;
+            const url = supabase.storage.from("profile").getPublicUrl(path).data.publicUrl;
+            const { data: existing, error: readError } = await supabase.from("profiles").select("id").limit(1).maybeSingle();
+            if (readError) throw readError;
+            const saved = existing?.id
+                ? await supabase.from("profiles").update({ hero_image_url: url }).eq("id", existing.id).select().single()
+                : await supabase.from("profiles").insert({ hero_image_url: url }).select().single();
+            if (saved.error) throw saved.error;
+            setProfile((prev: any) => ({ ...prev, ...saved.data }));
+            setMessage({ type: "success", text: "Hero photo saved. The homepage will display your new photo without changing its layout." });
+        } catch (error: any) {
+            setMessage({ type: "error", text: error.message || "Hero upload failed." });
+        } finally { setUploadingHero(false); e.target.value = ""; }
+    };
+
     const handleSave = async (e: React.FormEvent) => {
         e.preventDefault();
         if (!supabase) {
@@ -106,6 +137,7 @@ export default function ProfilePage() {
                     .from("profiles")
                     .update({
                         resume_url: profile.resume_url,
+                        hero_image_url: profile.hero_image_url,
                         bio: profile.bio,
                         email: profile.email,
                     })
@@ -114,6 +146,7 @@ export default function ProfilePage() {
                 result = await supabase.from("profiles").insert([
                     {
                         resume_url: profile.resume_url,
+                        hero_image_url: profile.hero_image_url,
                         bio: profile.bio,
                         email: profile.email,
                     },
@@ -155,12 +188,23 @@ export default function ProfilePage() {
                             : "bg-red-50 text-red-700 dark:bg-red-900/20 dark:text-red-400"
                             }`}
                     >
-                        {message.type === "success" ? <CheckCircle size={20} /> : <Loader2 size={20} className="animate-spin" />}
+                        {message.type === "success" ? <CheckCircle size={20} /> : <span aria-hidden="true">!</span>}
                         {message.text}
                     </div>
                 )}
 
                 <div className="space-y-6">
+                    <div className="rounded-2xl border border-blue-100 bg-blue-50/60 p-5 dark:border-blue-900 dark:bg-blue-950/20">
+                        <h3 className="mb-2 text-lg font-semibold text-gray-900 dark:text-white">Homepage hero photo</h3>
+                        <p className="mb-4 text-sm text-gray-600 dark:text-gray-300">Only the photo changes. The existing hero layout, decoration, positioning, and animations stay as they are.</p>
+                        <div className="flex flex-col gap-4 sm:flex-row sm:items-center">
+                            <img src={profile.hero_image_url || "/profile.png"} alt="Current hero photo" className="h-40 w-36 rounded-xl border bg-white object-contain" />
+                            <label className="inline-flex cursor-pointer items-center justify-center gap-2 rounded-xl bg-blue-600 px-5 py-3 font-semibold text-white">
+                                <Upload size={18}/>{uploadingHero ? "Uploading..." : "Replace hero photo"}
+                                <input type="file" accept="image/png,image/jpeg,image/webp" className="hidden" onChange={handleHeroUpload} disabled={uploadingHero}/>
+                            </label>
+                        </div>
+                    </div>
                     <div>
                         <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">Resume</h3>
                         <div className="flex items-center gap-6 p-6 border-2 border-dashed border-gray-200 dark:border-gray-700 rounded-lg bg-gray-50 dark:bg-gray-800/50">
@@ -181,7 +225,7 @@ export default function ProfilePage() {
                                 <span>{uploadingResume ? "Uploading..." : "Upload PDF"}</span>
                                 <input
                                     type="file"
-                                    accept=".pdf"
+                                    accept=".pdf,application/pdf"
                                     className="hidden"
                                     onChange={handleFileUpload}
                                     disabled={uploadingResume}
