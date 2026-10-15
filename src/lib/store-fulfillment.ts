@@ -1,6 +1,6 @@
 import { marketplaceAdmin, verifyPaystack } from "@/lib/marketplace-server";
 
-export async function confirmPurchase(reference: string) {
+export async function confirmPurchase(reference: string, buyerEmail?: string) {
   const db = marketplaceAdmin();
   if (!db) return { error: "Store unavailable", status: 503 } as const;
   if (!/^[a-zA-Z0-9_.=-]{8,100}$/.test(reference)) return { error: "Invalid reference", status: 400 } as const;
@@ -9,6 +9,8 @@ export async function confirmPurchase(reference: string) {
     .select("id,template_id,email,amount_kobo,currency,status").eq("reference", reference).maybeSingle();
   if (lookupError) return { error: "Could not check order", status: 503 } as const;
   if (!order) return { error: "Order not found", status: 404 } as const;
+
+  if (buyerEmail && order.email !== buyerEmail) return { error: "Order not found", status: 404 } as const;
 
   // Even previously confirmed orders are matched against Paystack before re-delivery.
   const verified = await verifyPaystack(reference);
