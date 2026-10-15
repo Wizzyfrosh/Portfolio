@@ -57,7 +57,13 @@ export async function sendPurchaseReceipt(db: SupabaseClient, order: Purchase): 
     signal: AbortSignal.timeout(12000),
   });
   if (!response.ok) {
-    console.error("Brevo receipt request failed", response.status);
+    // Log only provider error metadata, never the API key or recipient address.
+    const failure = await response.json().catch(() => null) as { code?: unknown; message?: unknown } | null;
+    const code = typeof failure?.code === "string" ? failure.code.slice(0, 100) : "unknown";
+    const message = typeof failure?.message === "string"
+      ? failure.message.replace(/[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}/g, "[email redacted]").slice(0, 300)
+      : "No provider details";
+    console.error("Brevo receipt request failed", response.status, code, message);
     return;
   }
   // Treat provider acceptance as submitted, not proof of inbox delivery.
