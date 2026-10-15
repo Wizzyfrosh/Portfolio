@@ -28,6 +28,7 @@ export default async function TemplateDetail({ params }: { params: Promise<{ slu
           <p className="text-gray-500">One-time payment</p>
           <p className="text-4xl font-extrabold">₦{(item.price_kobo / 100).toLocaleString("en-NG")}</p>
           <BuyTemplateButton id={item.id} />
+          <Link href="/store/recover" className="block text-sm font-semibold text-blue-600 underline">Already purchased? Recover download</Link>
           <p className="text-xs text-gray-500 dark:text-gray-400">After successful verification, you'll receive a short-lived secure download link.</p>
         </aside>
       </div>
