@@ -3,6 +3,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { ArrowLeft, ArrowUpRight, CheckCircle2, Download, ShieldCheck } from "lucide-react";
 import BuyTemplateButton from "@/components/BuyTemplateButton";
+import ContentEngagement from "@/components/ContentEngagement";
 
 export const dynamic = "force-dynamic";
 
@@ -27,6 +28,7 @@ export default async function TemplateDetail({ params }: { params: Promise<{ slu
                 <span className="rounded-full bg-slate-100 px-3 py-1.5 text-slate-500 dark:bg-slate-800 dark:text-slate-300">Digital download</span>
               </div>
               <h1 className="mb-6 text-3xl font-black leading-tight tracking-tight sm:text-4xl lg:text-5xl">{item.title}</h1>
+              <div className="mb-6"><ContentEngagement type="template" id={item.id} sharePath={`/store/${slug}`}/></div>
               <div className="overflow-hidden rounded-2xl border border-slate-200 bg-slate-100 dark:border-slate-700 dark:bg-slate-800">
                 {item.cover_image
                   ? <img src={item.cover_image} alt={`${item.title} website preview`} className="aspect-[16/10] w-full object-cover object-top"/>
