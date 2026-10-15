@@ -28,3 +28,15 @@ jobs:
           node-version: '24'
       - name: Verify Paystack signature security
         run: npm run test:security
+
+  public-staging-smoke:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+      - name: Check temporary staging domain without generating transactions
+        env:
+          MARKETPLACE_TEST_BASE_URL: https://paystack-test.froshcodeorbit.site
+        run: node --test tests/marketplace-preview-smoke.test.mjs
