@@ -4,6 +4,7 @@ import About from "@/components/About";
 import Services from "@/components/Services";
 import ExperienceSection from "@/components/ExperienceSection";
 import ProjectsSection from "@/components/ProjectsSection";
+import FeaturedTemplates from "@/components/FeaturedTemplates";
 import Contact from "@/components/Contact";
 import Footer from "@/components/Footer";
 import SplashWrapper from "@/components/SplashWrapper";
@@ -45,6 +46,7 @@ export default function Home() {
         <div id="projects">
           <ProjectsSection />
         </div>
+        <FeaturedTemplates />
         <Contact />
         <Footer />
       </main>
