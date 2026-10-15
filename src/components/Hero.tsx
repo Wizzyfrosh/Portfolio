@@ -11,7 +11,7 @@ export default function Hero() {
     useEffect(() => {
         if (!supabase) return;
         supabase.from("profiles").select("hero_image_url").limit(1).maybeSingle()
-            .then(({ data, error }) => { if (!error && data?.hero_image_url) setHeroImage(data.hero_image_url); });
+            .then(({ data, error }: { data: { hero_image_url: string | null } | null; error: { message: string } | null }) => { if (!error && data?.hero_image_url) setHeroImage(data.hero_image_url); });
     }, []);
     return (
         <section className="relative min-h-screen flex items-center justify-center overflow-hidden bg-white dark:bg-gray-900 transition-colors duration-300 pt-20 md:pt-28 pb-12 md:pb-0 px-4 md:px-0">
