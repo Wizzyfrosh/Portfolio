@@ -15,7 +15,7 @@ export default async function StorePage() {
     <div className="mx-auto max-w-6xl">
       <Link href="/" className="font-semibold text-blue-600">← Back to Portfolio</Link>
       <div className="my-12"><h1 className="text-4xl font-extrabold">Website Templates</h1>
-        <p className="mt-3 text-gray-500 dark:text-gray-300">Explore ready-made website templates available for purchase.</p></div>
+        <p className="mt-3 text-gray-500 dark:text-gray-300">Explore ready-made website templates available for purchase.</p><Link href="/store/recover" className="mt-4 inline-block font-semibold text-blue-600 underline">Already purchased? Recover your download →</Link></div>
       <div className="grid gap-7 md:grid-cols-2 lg:grid-cols-3">
         {(items || []).map(item => <article key={item.id} className="overflow-hidden rounded-2xl border bg-white shadow-sm dark:border-gray-800 dark:bg-gray-900">
           {item.cover_image && <img src={item.cover_image} alt={item.title} className="aspect-video w-full object-cover" />}
