@@ -1,3 +1,4 @@
+import { sendPurchaseReceipt } from "@/lib/store-receipt";
 import { marketplaceAdmin, verifyPaystack } from "@/lib/marketplace-server";
 
 export async function confirmPurchase(reference: string, buyerEmail?: string) {
@@ -26,6 +27,10 @@ export async function confirmPurchase(reference: string, buyerEmail?: string) {
       .eq("id", order.id).eq("status", "pending");
     if (updateError) return { error: "Could not confirm order", status: 503 } as const;
   }
+
+  // Receipt failures must never prevent successful customer downloads.
+  try { await sendPurchaseReceipt(db, { ...order, reference }); }
+  catch (error) { console.error("Purchase receipt unavailable", error instanceof Error ? error.message : "unknown"); }
 
   return { order, db, status: 200 } as const;
 }
