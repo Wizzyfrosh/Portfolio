@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { confirmPurchase } from "@/lib/store-fulfillment";
+import { sendPurchaseReceipt } from "@/lib/store-receipt";
 
 export const dynamic = "force-dynamic";
 
@@ -23,6 +24,7 @@ export async function POST(request: NextRequest) {
     const { data, error } = await result.db.storage.from("template-files")
       .createSignedUrl(template.file_path, 120, { download: true });
     if (error || !data?.signedUrl) return NextResponse.json({ error: "File delivery unavailable. Contact support." }, { status: 503 });
+    await sendPurchaseReceipt(result.db, { ...result.order, reference }).catch(() => { console.error("Receipt request failed"); });
     return NextResponse.json({ downloadUrl: data.signedUrl }, { headers: { "Cache-Control": "no-store" } });
   } catch {
     return NextResponse.json({ error: "Could not verify payment" }, { status: 500 });
