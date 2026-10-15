@@ -223,7 +223,11 @@ export default function ProjectForm({ initialData }: ProjectFormProps) {
                     <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-3">
                         {screenshots.map((url, idx) => (
                             <div key={idx} className="relative group aspect-video bg-gray-100 rounded-lg overflow-hidden">
-                                <img src={url} alt="Screenshot" className="object-cover w-full h-full" />
+                                <img src={url} alt={`Case study image ${idx + 1}`} className="object-cover w-full h-full" />
+                                <div className="absolute bottom-1 left-1 right-1 flex items-center gap-1">
+                                    {idx === 0 ? <span className="rounded-md bg-blue-600 px-2 py-1 text-[10px] font-bold text-white">Cover image</span>
+                                      : <button type="button" className="rounded-md bg-white/95 px-2 py-1 text-[10px] font-bold text-slate-900 shadow" onClick={() => setScreenshots(prev => [prev[idx], ...prev.filter((_, i) => i !== idx)])}>Set as cover</button>}
+                                </div>
                                 <button
                                     type="button"
                                     onClick={() => setScreenshots(prev => prev.filter((_, i) => i !== idx))}
