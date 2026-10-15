@@ -50,18 +50,18 @@ Use Paystack test mode first. Never enter live keys until test purchases and pri
 ## Notes
 
 - The initial resume problem was an inconsistent link: `/resume.pdf` was referenced but wasn't in `public/`. The upload code also did not save its URL until an extra click; a missing bucket/policy could cause an upload failure. SQL fixes bucket access where needed.
-- Paystack verification is implemented using the official `transaction/verify/:reference` endpoint. Customers must return to the completion page and verify to get the file. A future enhancement can add a signed webhook plus transactional email delivery and order-management.
+- Paystack verification is implemented using the official `transaction/verify/:reference` endpoint. Customers must return to the completion page and verify to get the file. A signed Paystack webhook has been implemented for `charge.success`, along with `/store/recover`. Transactional email and order-management are not enabled yet.
 - The public template catalog is separate from client case studies, preventing accidentally listing client-owned projects as downloadable merchandise.
 - Your prior draft Meta catalog PR #5 remains independent and is not included here.
 - Template and profile mutations are now restricted to the existing portfolio admin account. Legacy project and blog policies still use their existing authenticated-user convention; audit those separately before adding any additional auth users.
 
 ## Vercel access limitation (current)
 
-The connected Vercel integration returned an authorization error for environment-variable metadata on the `froshcodeorbit` project. Complete secret configuration manually through the Vercel dashboard. Do not paste private keys into ChatGPT, GitHub, screenshots, or public issue comments. The test payment flow has **not** been executed or validated yet.
+The connected Vercel integration returned an authorization error for environment-variable metadata on the `froshcodeorbit` project. Complete secret configuration manually through the Vercel dashboard. Do not paste private keys into ChatGPT, GitHub, screenshots, or public issue comments. A Paystack TEST checkout was completed successfully on 15 Oct 2026, with the order verified and ZIP opened by the owner. The webhook itself has not yet been tested. Vercel Preview SSO protection prevents unauthenticated webhook delivery on preview domains.
 
 ## 2026-10-14 Database migration status
 
-Applied in Supabase **My Portfolio Website** (`tbrizmndydegsykqtnwj`): case-study fields, portfolio resume profile write policies (using existing working `profile` storage bucket rather than recreating it), marketplace tables/private bucket, and owner-only admin hardening. Verified 7 projects, 1 profile, 1 admin; 0 templates or orders. Do **not** rerun `20261014_resume_storage_fix.sql` as-is: the live environment needed a different, less disruptive change to `profiles` insert/update RLS. The checked-in hardening migration includes the final access policies. For later new installations, use a tailored migration sequence.
+Applied in Supabase **My Portfolio Website** (`tbrizmndydegsykqtnwj`): case-study fields, portfolio resume profile write policies (using existing working `profile` storage bucket rather than recreating it), marketplace tables/private bucket, and owner-only admin hardening. Originally verified 7 projects, 1 profile, 1 admin. Subsequently 1 template and a successful TEST order were verified. Do **not** rerun `20261014_resume_storage_fix.sql` as-is: the live environment needed a different, less disruptive change to `profiles` insert/update RLS. The checked-in hardening migration includes the final access policies. For later new installations, use a tailored migration sequence.
 
 Vercel environment metadata access returned 403 for the connected scope. Paystack test secret and Supabase service role key need to be configured in the owner-controlled Vercel dashboard and test purchases verified before PR merge.
 
@@ -73,3 +73,12 @@ Vercel environment metadata access returned 403 for the connected scope. Paystac
 - Idempotency: a previously paid order keeps its existing `paid_at` timestamp. No direct client access to private ZIP files or order records.
 - **Not yet implemented:** emailed receipts / durable email-based purchase lookup, rate limiting, authenticated buyer accounts, and complete real-payment regression/security tests. Do not activate production Paystack keys yet.
 - For initial smoke test, use a signed-in tester's existing **paid test reference** at `/store/recover` to verify that the second download works without another charge. Confirm status in `template_orders` and confirm unsigned storage URLs cannot be accessed.
+
+
+## Purchase recovery, webhook and launch safety (15 Oct 2026)
+
+- Recovery page: `/store/recover`. Customers enter the original `frosh_...` reference, then the original checkout email at `/store/complete`. The server checks Paystack's verify API, the stored currency/amount/reference and Paystack customer email before it creates a short-lived private ZIP URL. A past successful purchase can be recovered without paying again.
+- Webhook handler: `POST /api/store/webhook`. It authenticates `x-paystack-signature` using HMAC-SHA512 on the exact raw request body with the server-only Paystack secret. Only `charge.success` attempts fulfillment; all details are verified against Paystack and the database. Replayed successful events do not change `paid_at` once status is paid. There is no public listing endpoint for orders.
+- **Preview limitation:** Vercel project `froshcodeorbit` has SSO protection set to `all_except_custom_domains`. Paystack webhook delivery to protected `*.vercel.app` preview hostnames cannot be assumed to work. Keep preview protection enabled. Do not point Paystack live webhook to a transient preview, expose the SSO bypass token, or enable live charges while testing. Configure the webhook in Paystack TEST settings only when an intentionally public, stable URL is ready, then verify a signed delivery and the order's paid status when the buyer does not return.
+- **Production launch:** Explicitly review branch merge, configure production environment keys, set Paystack live webhook URL to `https://www.froshcodeorbit.site/api/store/webhook` **only after production deployment**, and test signed webhook delivery. Never deploy a test Paystack secret with live payments or vice versa.
+- **Still pending:** email receipts, durable purchase reference email retrieval, anonymous negative-access tests, duplicate webhook replay test, complete admin/resume/case-study regression, and final production approval. Paystack test checkout/download has passed, but live release is not approved.
