@@ -64,3 +64,12 @@ The connected Vercel integration returned an authorization error for environment
 Applied in Supabase **My Portfolio Website** (`tbrizmndydegsykqtnwj`): case-study fields, portfolio resume profile write policies (using existing working `profile` storage bucket rather than recreating it), marketplace tables/private bucket, and owner-only admin hardening. Verified 7 projects, 1 profile, 1 admin; 0 templates or orders. Do **not** rerun `20261014_resume_storage_fix.sql` as-is: the live environment needed a different, less disruptive change to `profiles` insert/update RLS. The checked-in hardening migration includes the final access policies. For later new installations, use a tailored migration sequence.
 
 Vercel environment metadata access returned 403 for the connected scope. Paystack test secret and Supabase service role key need to be configured in the owner-controlled Vercel dashboard and test purchases verified before PR merge.
+
+## Purchase recovery + Paystack webhook (test mode)
+
+- Recovery page: `/store/recover`. Buyer enters the Paystack reference, then verifies with their original checkout email. The backend independently verifies success, amount, NGN currency, Paystack customer email, and order reference before generating a fresh 120-second private ZIP link.
+- Test webhook endpoint: `https://<current-preview-host>/api/store/webhook`. Configure **Test Webhook URL** in the Paystack dashboard only after the new preview build is READY. Use the exact preview host you are testing; never point a live webhook at an unmerged preview deployment.
+- Webhook authenticity: validate `x-paystack-signature` using HMAC-SHA512 and the relevant Paystack secret key, with a timing-safe comparison over the raw request body. Only the `charge.success` event can mark an order paid, and it is independently verified via the Paystack transaction API. Unknown references do not create orders.
+- Idempotency: a previously paid order keeps its existing `paid_at` timestamp. No direct client access to private ZIP files or order records.
+- **Not yet implemented:** emailed receipts / durable email-based purchase lookup, rate limiting, authenticated buyer accounts, and complete real-payment regression/security tests. Do not activate production Paystack keys yet.
+- For initial smoke test, use a signed-in tester's existing **paid test reference** at `/store/recover` to verify that the second download works without another charge. Confirm status in `template_orders` and confirm unsigned storage URLs cannot be accessed.
