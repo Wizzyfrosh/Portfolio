@@ -40,6 +40,7 @@ export default function PaymentComplete() {
       </form> : <p className="text-red-600">No payment reference was provided. Return to the store or contact support.</p>}
       {status && <p role="status" className="text-sm">{status}</p>}
       {downloadUrl && <a href={downloadUrl} className="inline-block rounded-full bg-green-600 px-6 py-3 font-bold text-white" rel="noreferrer">Download purchased ZIP</a>}
+      <Link href="/store/recover" className="block text-blue-600">Need to recover a previous purchase?</Link>
       <Link href="/store" className="block text-blue-600">Back to store</Link>
     </div>
   </main>;
