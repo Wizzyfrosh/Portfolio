@@ -84,18 +84,22 @@ Vercel environment metadata access returned 403 for the connected scope. Paystac
 - **Still pending:** email receipts, durable purchase reference email retrieval, anonymous negative-access tests, duplicate webhook replay test, complete admin/resume/case-study regression, and final production approval. Paystack test checkout/download has passed, but live release is not approved.
 
 
-## Resend customer receipts (prepared 15 Oct 2026)
+## Brevo customer receipts (15 Oct 2026)
 
-The new `src/lib/store-receipt.ts` sends purchase confirmations only after the backend independently verifies the Paystack transaction and matching stored order. It emails the template title, amount, reference and a secure purchase recovery URL, **never** the private ZIP file or permanent storage URL. `receipt_sent_at` tracks successful Resend API acceptance. Receipt failures don't prevent paid downloads. Repeated calls use a stable Resend idempotency key and skip rows already marked sent.
+Resend was replaced with Brevo for purchase-confirmation email. No Resend API key is required.
 
-Applied additive migration `migrations/20261015_template_order_receipts.sql` to My Portfolio Website on 15 Oct. Existing test order remains paid, receipt not yet sent.
+The optional `src/lib/store-receipt.ts` sends through the Brevo REST Transactional Email API after the server has independently verified Paystack reference, order email, amount, and currency. Email delivery failures never prevent authorized ZIP downloads. Receipts include the template title, payment amount, transaction reference, and the recovery page link, but never the template ZIP itself.
 
-Resend sender setup (Preview only initially):
-1. Verify a domain in Resend Domains and add the DNS records it provides, using your DNS host. A subdomain such as `mail.froshcodeorbit.site` is reasonable; use exactly the domain Resend confirms as verified.
-2. Generate a Resend API key with sending permission.
-3. In Vercel `froshcodeorbit` project, add `RESEND_API_KEY` as a **secret**, Preview only (never `NEXT_PUBLIC_`).
-4. Add `RESEND_FROM_EMAIL` in Preview as a verified-domain sender, e.g. `Frosh CodeOrbit <orders@mail.froshcodeorbit.site>` **only if that subdomain was verified**.
-5. Redeploy Preview after saving. Recover the existing paid test order to trigger a receipt email, and verify `receipt_sent_at` is populated.
-6. Do not enable production Resend keys, live Paystack or merge the PR until webhook and security tests pass.
+The additive `migrations/20261015_template_order_receipts.sql` was already applied. It adds `receipt_sent_at` for tracking accepted submissions, preserving paid orders. Existing test purchase is intact.
 
-Note: Prior preview links can have Vercel SSO protection and email recovery links use the deployment's hostname. Preview receipts may only be usable by the owner; production receipts will use the public site URL. An email accepted by Resend is not proof of mailbox delivery. Review Resend send logs and inbox/spam folder.
+### Required owner configuration
+1. Create/sign in to Brevo and ensure transactional email sending is enabled.
+2. In Brevo, configure and verify a sender email address. Brevo might require email verification and/or DNS-based domain authentication; do not assume generic addresses can send before provider validation.
+3. Generate a Brevo API key (not an SMTP password).
+4. Add `BREVO_API_KEY` to the Vercel froshcodeorbit project's **Preview** environment as a private secret.
+5. Add `BREVO_FROM_EMAIL` to Preview with the exact verified sender email address, e.g. `orders@froshcodeorbit.site` only if verified in Brevo. Do not include display-name formatting here.
+6. Redeploy Preview so the keys are available. Verify email receipt using the existing paid test order/recovery page; inspect Brevo transactional logs and your inbox.
+7. Keep production sender credentials disabled until regression testing, signed webhook delivery, and explicit production approval.
+
+Avoid keeping unused `RESEND_API_KEY` or `RESEND_FROM_EMAIL` in Vercel. If they were never added, no cleanup is necessary.
+
