@@ -7,7 +7,8 @@
     "build": "next build",
     "start": "next start",
     "lint": "eslint",
-    "test:security": "node --experimental-strip-types --test tests/*.test.mjs"
+    "test:security": "node --experimental-strip-types --test tests/paystack-webhook-signature.test.mjs",
+    "test:staging": "node --test tests/marketplace-preview-smoke.test.mjs"
   },
   "dependencies": {
     "@supabase/ssr": "^0.8.0",
