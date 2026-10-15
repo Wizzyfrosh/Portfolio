@@ -61,7 +61,7 @@ export async function sendPurchaseReceipt(db: SupabaseClient, order: Purchase): 
     const failure = await response.json().catch(() => null) as { code?: unknown; message?: unknown } | null;
     const code = typeof failure?.code === "string" ? failure.code.slice(0, 100) : "unknown";
     const message = typeof failure?.message === "string"
-      ? failure.message.replace(/[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}/g, "[email redacted]").slice(0, 300)
+      ? failure.message.replace(/\b[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}\b/gi, "[email redacted]").slice(0, 300)
       : "No provider details";
     console.error("Brevo receipt request failed", response.status, code, message);
     return;
