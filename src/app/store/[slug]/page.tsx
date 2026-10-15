@@ -1,11 +1,32 @@
 import { createClient } from "@supabase/supabase-js";
 import Link from "next/link";
 import { notFound } from "next/navigation";
+import type { Metadata } from "next";
 import { ArrowLeft, ArrowUpRight, CheckCircle2, Download, ShieldCheck } from "lucide-react";
 import BuyTemplateButton from "@/components/BuyTemplateButton";
 import ContentEngagement from "@/components/ContentEngagement";
 
 export const dynamic = "force-dynamic";
+
+export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }): Promise<Metadata> {
+  const { slug } = await params;
+  const origin = "https://www.froshcodeorbit.site";
+  const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
+  const key = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
+  if (!url || !key) return { title: "Website Template", robots: { index: false } };
+  const db = createClient(url, key, { auth: { persistSession: false } });
+  const { data } = await db.from("website_templates")
+    .select("title,description,cover_image").eq("slug", slug).eq("published", true).maybeSingle();
+  if (!data) return { title: "Template not found", robots: { index: false } };
+  const canonical = `${origin}/store/${encodeURIComponent(slug)}`;
+  const description = String(data.description || "Explore this website template by Frosh CodeOrbit.").slice(0, 160);
+  const images = data.cover_image?.startsWith("https://") ? [data.cover_image] : [];
+  return {
+    title: data.title, description, alternates: { canonical },
+    openGraph: { title: data.title, description, url: canonical, type: "website", ...(images.length ? { images } : {}) },
+    twitter: { card: images.length ? "summary_large_image" : "summary", title: data.title, description, ...(images.length ? { images } : {}) },
+  };
+}
 
 export default async function TemplateDetail({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
