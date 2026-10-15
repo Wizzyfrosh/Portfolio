@@ -21,7 +21,10 @@ test("public storefront is reachable without Vercel SSO", async () => {
 
 test("unknown template slug does not expose a purchase", async () => {
   const res = await request("/store/this-template-does-not-exist-smoke-test");
-  assert.equal(res.status, 404);
+  const html = await res.text();
+  // Next.js can stream a rendered not-found boundary with HTTP 200.
+  assert.ok(res.status === 404 || (res.status === 200 && /not found|404|noindex/i.test(html)));
+  assert.doesNotMatch(html, /Buy securely with Paystack/i);
 });
 
 test("malformed checkout is rejected before payment initialization", async () => {
