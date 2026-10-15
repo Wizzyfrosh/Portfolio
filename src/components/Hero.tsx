@@ -3,8 +3,16 @@
 import { motion } from "framer-motion";
 import { ArrowRight, Check } from "lucide-react";
 import SkillsBar from "./SkillsBar";
+import { useEffect, useState } from "react";
+import { supabase } from "@/lib/supabase-browser";
 
 export default function Hero() {
+    const [heroImage, setHeroImage] = useState("/profile.png");
+    useEffect(() => {
+        if (!supabase) return;
+        supabase.from("profiles").select("hero_image_url").limit(1).maybeSingle()
+            .then(({ data, error }) => { if (!error && data?.hero_image_url) setHeroImage(data.hero_image_url); });
+    }, []);
     return (
         <section className="relative min-h-screen flex items-center justify-center overflow-hidden bg-white dark:bg-gray-900 transition-colors duration-300 pt-20 md:pt-28 pb-12 md:pb-0 px-4 md:px-0">
             {/* Background Gradient */}
@@ -100,7 +108,7 @@ export default function Hero() {
                     {/* Profile Image Container */}
                     <div className="relative w-full max-w-[280px] sm:max-w-[340px] md:max-w-[420px] max-h-[300px] md:max-h-none flex justify-center overflow-hidden md:overflow-visible">
                         <img
-                            src="/profile.png"
+                            src={heroImage}
                             alt="Umanor Wisdom"
                             className="object-contain w-full h-auto relative z-10 scale-110 md:scale-105 origin-bottom drop-shadow-[0_20px_50px_rgba(0,0,0,0.3)] dark:drop-shadow-[0_20px_50px_rgba(0,119,255,0.2)]"
                         />
