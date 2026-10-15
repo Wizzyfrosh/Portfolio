@@ -1,7 +1,6 @@
 import { createHmac, timingSafeEqual } from "node:crypto";
 import { NextRequest, NextResponse } from "next/server";
 import { confirmPurchase } from "@/lib/store-fulfillment";
-import { sendPurchaseReceipt } from "@/lib/store-receipt";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -12,7 +11,14 @@ export async function POST(request: NextRequest) {
   if (!key || !/^[0-9a-f]{128}$/i.test(signature)) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
+  // Limit untrusted webhook bodies before processing; Paystack events are small JSON documents.
+  if (Number(request.headers.get("content-length") || 0) > 65536) {
+    return NextResponse.json({ error: "Payload too large" }, { status: 413 });
+  }
   const raw = await request.text();
+  if (Buffer.byteLength(raw, "utf8") > 65536) {
+    return NextResponse.json({ error: "Payload too large" }, { status: 413 });
+  }
   const expected = createHmac("sha512", key).update(raw).digest();
   const supplied = Buffer.from(signature, "hex");
   if (expected.length !== supplied.length || !timingSafeEqual(expected, supplied)) {
@@ -33,7 +39,6 @@ export async function POST(request: NextRequest) {
       if (result.status === 404) return NextResponse.json({ received: true });
       return NextResponse.json({ error: "Verification pending" }, { status: 503 });
     }
-    await sendPurchaseReceipt(result.db, { ...result.order, reference }).catch(() => { console.error("Receipt request failed"); });
     return NextResponse.json({ received: true });
   } catch {
     return NextResponse.json({ error: "Try again later" }, { status: 503 });
