@@ -1,0 +1,30 @@
+name: Marketplace security checks
+on:
+  pull_request:
+    paths:
+      - 'src/app/api/store/**'
+      - 'src/lib/paystack-webhook-signature.ts'
+      - 'tests/**'
+      - 'package.json'
+      - '.github/workflows/marketplace-security.yml'
+  push:
+    branches:
+      - feature/portfolio-marketplace-case-studies-resume
+    paths:
+      - 'src/app/api/store/**'
+      - 'src/lib/paystack-webhook-signature.ts'
+      - 'tests/**'
+      - 'package.json'
+      - '.github/workflows/marketplace-security.yml'
+permissions:
+  contents: read
+jobs:
+  paystack-signatures:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+      - name: Verify Paystack signature security
+        run: npm run test:security
