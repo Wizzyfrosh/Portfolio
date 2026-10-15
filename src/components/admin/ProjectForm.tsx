@@ -4,7 +4,6 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { supabase } from "@/lib/supabase-browser";
 import { Upload, X, Loader2 } from "lucide-react";
-import Image from "next/image";
 import { revalidateProjects } from "@/app/actions/projects";
 
 interface ProjectFormProps {
@@ -45,34 +44,30 @@ export default function ProjectForm({ initialData }: ProjectFormProps) {
     };
 
     const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>, bucket: "screenshots" | "apks") => {
-        if (!e.target.files || e.target.files.length === 0) return;
-
+        const files = Array.from(e.target.files || []);
+        if (!files.length) return;
         setUploading(true);
         setError(null);
-        const file = e.target.files[0];
-        const fileExt = file.name.split(".").pop();
-        const fileName = `${Date.now()}.${fileExt}`;
-        const filePath = `${fileName}`;
-
         try {
-            if (!supabase) throw new Error("Supabase client is not initialized.");
-            const { error: uploadError } = await supabase.storage.from(bucket).upload(filePath, file);
-
-            if (uploadError) throw uploadError;
-
-            const { data } = supabase.storage.from(bucket).getPublicUrl(filePath);
-
-            if (bucket === "screenshots") {
-                setScreenshots((prev) => [...prev, data.publicUrl]);
-            } else {
-                setFormData((prev) => ({ ...prev, apk_url: data.publicUrl }));
+            if (!supabase) throw new Error("Database is not configured.");
+            const { data: { session } } = await supabase.auth.getSession();
+            if (!session) throw new Error("Sign in before uploading project media.");
+            for (const file of files) {
+                if (bucket === "screenshots" && (!["image/png", "image/jpeg", "image/webp"].includes(file.type) || file.size > 5 * 1024 * 1024)) {
+                    throw new Error("Upload PNG, JPG or WebP images below 5 MB each.");
+                }
+                const ext = bucket === "screenshots" ? (file.type === "image/png" ? "png" : file.type === "image/webp" ? "webp" : "jpg") : "apk";
+                const filePath = `projects/${crypto.randomUUID()}.${ext}`;
+                const { error: uploadError } = await supabase.storage.from(bucket)
+                    .upload(filePath, file, { contentType: file.type || (bucket === "apks" ? "application/vnd.android.package-archive" : "image/jpeg"), upsert: false });
+                if (uploadError) throw uploadError;
+                const publicUrl = supabase.storage.from(bucket).getPublicUrl(filePath).data.publicUrl;
+                if (bucket === "screenshots") setScreenshots(prev => [...prev, publicUrl]);
+                else setFormData(prev => ({ ...prev, apk_url: publicUrl }));
             }
-        } catch (error: any) {
-            console.error("Error uploading file:", error);
-            setError(error.message || "Error uploading file. Make sure storage buckets ('apks', 'screenshots') exist.");
-        } finally {
-            setUploading(false);
-        }
+        } catch (error: unknown) {
+            setError(error instanceof Error ? error.message : "Upload failed.");
+        } finally { setUploading(false); e.target.value = ""; }
     };
 
     const handleSubmit = async (e: React.FormEvent) => {
@@ -127,7 +122,7 @@ export default function ProjectForm({ initialData }: ProjectFormProps) {
     };
 
     return (
-        <form onSubmit={handleSubmit} className="bg-white p-8 rounded-xl shadow-sm border border-gray-100 max-w-4xl mx-auto space-y-8">
+        <form onSubmit={handleSubmit} className="bg-white p-5 sm:p-8 rounded-2xl shadow-sm border border-gray-100 max-w-4xl mx-auto space-y-8">
 
             {/* Basic Info */}
             {error && (
@@ -138,8 +133,8 @@ export default function ProjectForm({ initialData }: ProjectFormProps) {
             <div className="space-y-4">
                 <h3 className="text-xl font-bold text-gray-900 border-b pb-2">Project Details</h3>
 
-                <div className="grid md:grid-cols-2 gap-6">
-                    <div className="col-span-2">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div className="md:col-span-2">
                         <label className="block text-sm font-medium text-gray-700 mb-1">Project Title</label>
                         <input
                             type="text"
@@ -151,7 +146,7 @@ export default function ProjectForm({ initialData }: ProjectFormProps) {
                         />
                     </div>
 
-                    <div className="col-span-2">
+                    <div className="md:col-span-2">
                         <label className="block text-sm font-medium text-gray-700 mb-1">Description</label>
                         <textarea
                             name="description"
@@ -163,7 +158,7 @@ export default function ProjectForm({ initialData }: ProjectFormProps) {
                         />
                     </div>
 
-                    <div className="col-span-2">
+                    <div className="md:col-span-2">
                         <label className="block text-sm font-medium text-gray-700 mb-1">Tech Stack (comma separated)</label>
                         <input
                             type="text"
@@ -223,7 +218,8 @@ export default function ProjectForm({ initialData }: ProjectFormProps) {
 
                 {/* Screenshots */}
                 <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">Screenshots</label>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">Project / Case Study Images</label>
+                    <p className="mb-3 text-xs text-gray-500">Upload PNG, JPG or WebP, up to 5 MB each. The first image becomes the cover of the project and case study. You can remove existing images and add replacements.</p>
                     <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-3">
                         {screenshots.map((url, idx) => (
                             <div key={idx} className="relative group aspect-video bg-gray-100 rounded-lg overflow-hidden">
@@ -231,7 +227,7 @@ export default function ProjectForm({ initialData }: ProjectFormProps) {
                                 <button
                                     type="button"
                                     onClick={() => setScreenshots(prev => prev.filter((_, i) => i !== idx))}
-                                    className="absolute top-1 right-1 bg-red-500 text-white p-1 rounded-full opacity-0 group-hover:opacity-100 transition-opacity"
+                                    aria-label="Remove screenshot" className="absolute top-1 right-1 bg-red-600 text-white p-2 rounded-full"
                                 >
                                     <X size={14} />
                                 </button>
@@ -239,10 +235,10 @@ export default function ProjectForm({ initialData }: ProjectFormProps) {
                         ))}
                         <label className="flex flex-col items-center justify-center border-2 border-dashed border-gray-300 rounded-lg aspect-video cursor-pointer hover:border-blue-500 transition-colors">
                             <Upload className="text-gray-400 mb-2" />
-                            <span className="text-xs text-gray-500">Upload Image</span>
+                            <span className="text-xs text-gray-500">{uploading ? "Uploading..." : "Add Images"}</span>
                             <input
                                 type="file"
-                                accept="image/*"
+                                accept="image/png,image/jpeg,image/webp" multiple
                                 className="hidden"
                                 onChange={(e) => handleFileUpload(e, "screenshots")}
                                 disabled={uploading}
@@ -291,7 +287,7 @@ export default function ProjectForm({ initialData }: ProjectFormProps) {
                 </label>
             </div>
 
-            <div className="flex justify-end gap-4">
+            <div className="flex flex-wrap justify-end gap-4">
                 <button
                     type="button"
                     onClick={() => router.back()}
