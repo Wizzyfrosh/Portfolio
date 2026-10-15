@@ -1,4 +1,5 @@
 import Link from "next/link";
+import ContentEngagement from "@/components/ContentEngagement";
 import { ArrowUpRight, LayoutTemplate } from "lucide-react";
 
 export type StoreTemplate = {
@@ -22,6 +23,7 @@ export default function TemplateCard({ item }: { item: StoreTemplate }) {
           <h3 className="text-xl font-extrabold leading-snug tracking-tight text-slate-900 dark:text-white">{item.title}</h3>
           <p className="line-clamp-2 text-sm leading-6 text-slate-600 dark:text-slate-300">{item.description || "A ready-made website template to kick-start your next project."}</p>
         </div>
+        <ContentEngagement type="template" id={item.id} sharePath={`/store/${item.slug}`} compact />
         <div className="mt-auto flex flex-wrap items-center justify-between gap-3 border-t border-slate-100 pt-4 dark:border-slate-700">
           <div><p className="text-[11px] font-semibold uppercase tracking-widest text-slate-400">One-time price</p><p className="mt-1 text-2xl font-black tracking-tight text-slate-900 dark:text-white">₦{(item.price_kobo / 100).toLocaleString("en-NG")}</p></div>
           <Link href={`/store/${item.slug}`} className="inline-flex items-center gap-2 rounded-xl bg-blue-600 px-4 py-3 text-sm font-bold text-white transition hover:bg-blue-700">Details <ArrowUpRight size={16}/></Link>
