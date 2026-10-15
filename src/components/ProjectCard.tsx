@@ -3,6 +3,7 @@
 import { motion } from "framer-motion";
 import { Github, ExternalLink, Eye } from "lucide-react";
 import Link from "next/link";
+import ContentEngagement from "@/components/ContentEngagement";
 
 interface Project {
     id: string;
@@ -69,6 +70,7 @@ export default function ProjectCard({ project }: { project: Project }) {
                     )}
                 </div>
 
+                <div className="mb-4"><ContentEngagement type="project" id={project.id} compact /></div>
                 {/* Actions Row */}
                 <div className="flex items-center gap-3 mt-auto">
                     <Link
