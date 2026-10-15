@@ -1,4 +1,4 @@
-import { createHmac, timingSafeEqual } from "node:crypto";
+import { isValidPaystackSignature } from "@/lib/paystack-webhook-signature";
 import { NextRequest, NextResponse } from "next/server";
 import { confirmPurchase } from "@/lib/store-fulfillment";
 
@@ -6,11 +6,6 @@ export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 
 export async function POST(request: NextRequest) {
-  const key = process.env.PAYSTACK_SECRET_KEY;
-  const signature = request.headers.get("x-paystack-signature") || "";
-  if (!key || !/^[0-9a-f]{128}$/i.test(signature)) {
-    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-  }
   // Limit untrusted webhook bodies before processing; Paystack events are small JSON documents.
   if (Number(request.headers.get("content-length") || 0) > 65536) {
     return NextResponse.json({ error: "Payload too large" }, { status: 413 });
@@ -19,9 +14,7 @@ export async function POST(request: NextRequest) {
   if (Buffer.byteLength(raw, "utf8") > 65536) {
     return NextResponse.json({ error: "Payload too large" }, { status: 413 });
   }
-  const expected = createHmac("sha512", key).update(raw).digest();
-  const supplied = Buffer.from(signature, "hex");
-  if (expected.length !== supplied.length || !timingSafeEqual(expected, supplied)) {
+  if (!isValidPaystackSignature(raw, request.headers.get("x-paystack-signature"), process.env.PAYSTACK_SECRET_KEY)) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
   let event: { event?: string; data?: { reference?: string } };
