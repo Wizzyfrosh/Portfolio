@@ -22,7 +22,7 @@ test("mobile storefront, form and access smoke", async () => {
     const templateLink = page.locator("a[href^='/store/']").filter({ hasNotText: /recover/i }).first();
     assert.ok(await templateLink.count() > 0, "Published template link must be present");
     await templateLink.click();
-    assert.equal(await page.getByRole("button", { name: /buy securely with paystack/i }).isVisible(), true);
+    await page.getByRole("button", { name: /buy securely with paystack/i }).waitFor({ state: "visible", timeout: 12000 });
     assert.equal(await page.locator("input[type=email]").isVisible(), true);
     await page.goto(base + "/store/recover", { waitUntil: "domcontentloaded" });
     assert.equal(await page.getByRole("heading", { name: /recover your template/i }).isVisible(), true);
