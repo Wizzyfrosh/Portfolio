@@ -9,7 +9,7 @@ export function marketplaceAdmin() {
 
 export async function verifyPaystack(reference: string) {
   const key = process.env.PAYSTACK_SECRET_KEY;
-  if (!key || !/^[a-zA-Z0-9.=-]{8,100}$/.test(reference)) return null;
+  if (!key || !/^[a-zA-Z0-9_.=-]{8,100}$/.test(reference)) return null;
   const response = await fetch(`https://api.paystack.co/transaction/verify/${encodeURIComponent(reference)}`, {
     headers: { Authorization: `Bearer ${key}` },
     cache: "no-store",
