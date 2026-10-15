@@ -3,10 +3,14 @@ import { randomUUID } from "node:crypto";
 import { marketplaceAdmin } from "@/lib/marketplace-server";
 
 export async function POST(request: NextRequest) {
+  const length = Number(request.headers.get("content-length") || 0);
+  if (length > 8192) return NextResponse.json({ error: "Request too large" }, { status: 413 });
   try {
     const db = marketplaceAdmin();
     if (!db) return NextResponse.json({ error: "Checkout is not configured" }, { status: 503 });
-    const body = await request.json();
+    const raw = await request.text();
+    if (Buffer.byteLength(raw, "utf8") > 8192) return NextResponse.json({ error: "Request too large" }, { status: 413 });
+    const body = JSON.parse(raw);
     const templateId = typeof body?.templateId === "string" ? body.templateId : "";
     const email = typeof body?.email === "string" ? body.email.trim().toLowerCase() : "";
     if (!/^[0-9a-f-]{36}$/i.test(templateId) || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email) || email.length > 254) {
@@ -37,7 +41,7 @@ export async function POST(request: NextRequest) {
       template_id: template.id, email, reference, amount_kobo: template.price_kobo, currency: "NGN",
     });
     if (error) return NextResponse.json({ error: "Could not register checkout" }, { status: 503 });
-    return NextResponse.json({ url: result.data.authorization_url });
+    return NextResponse.json({ url: result.data.authorization_url }, { headers: { "Cache-Control": "no-store" } });
   } catch {
     return NextResponse.json({ error: "Unable to start checkout" }, { status: 500 });
   }
