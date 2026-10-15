@@ -147,10 +147,11 @@ export default function ProjectsPage() {
                                             <div className="flex items-center justify-end gap-2">
                                                 <Link
                                                     href={`/admin/projects/${project.id}/edit`}
-                                                    className="p-2 text-gray-400 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-all"
-                                                    title="Edit"
+                                                    className="inline-flex items-center gap-2 rounded-xl bg-blue-50 px-3 py-2 text-xs font-bold text-blue-700 transition hover:bg-blue-100"
+                                                    title="Edit project, case study and images"
                                                 >
-                                                    <Edit2 size={18} />
+                                                    <Edit2 size={16} />
+                                                    Edit / Case Study
                                                 </Link>
                                                 <button
                                                     onClick={() => handleDelete(project.id)}
