@@ -10,7 +10,7 @@ export async function POST(request: NextRequest) {
     const payload = await request.json();
     const reference = typeof payload?.reference === "string" ? payload.reference : "";
     const email = typeof payload?.email === "string" ? payload.email.trim().toLowerCase() : "";
-    if (!/^[a-zA-Z0-9.=-]{8,100}$/.test(reference) || !email || email.length > 254) {
+    if (!/^[a-zA-Z0-9_.=-]{8,100}$/.test(reference) || !email || email.length > 254) {
       return NextResponse.json({ error: "Reference and purchase email required" }, { status: 400 });
     }
     const { data: order } = await db.from("template_orders").select("id,template_id,email,amount_kobo,currency,status")
