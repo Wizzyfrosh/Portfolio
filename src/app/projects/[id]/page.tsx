@@ -1,5 +1,6 @@
 import { supabase } from "@/lib/supabase";
 import Link from "next/link";
+import ContentEngagement from "@/components/ContentEngagement";
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { ArrowLeft, ArrowUpRight, Github, Globe, Download, Calendar, Layers, Image as ImageIcon } from "lucide-react";
@@ -56,6 +57,7 @@ export default async function ProjectDetailPage({ params }: ProjectPageProps) {
             </div>
             <h1 className="max-w-4xl break-words text-3xl font-black leading-[1.12] tracking-tight sm:text-4xl lg:text-5xl">{project.title}</h1>
             <p className="mt-5 max-w-3xl whitespace-pre-line break-words text-base leading-8 text-slate-600 dark:text-slate-300">{project.description}</p>
+            <div className="mt-6"><ContentEngagement type="project" id={project.id}/></div>
             <div className="mt-6 flex flex-wrap gap-2">
               {tech.map((name, i) => <span key={i} className="rounded-full border border-slate-200 bg-slate-50 px-3 py-1.5 text-xs font-semibold text-slate-600 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-300">{name}</span>)}
             </div>
