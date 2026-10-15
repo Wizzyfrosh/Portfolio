@@ -40,3 +40,18 @@ jobs:
         env:
           MARKETPLACE_TEST_BASE_URL: https://paystack-test.froshcodeorbit.site
         run: node --test tests/marketplace-preview-smoke.test.mjs
+
+  mobile-browser-smoke:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+      - name: Install browser test dependencies
+        run: |
+          npm ci
+          npm install --no-save --package-lock=false playwright
+          npx playwright install --with-deps chromium
+      - name: Test storefront in mobile Chromium without creating a purchase
+        run: node --test tests/marketplace-mobile-browser.test.mjs
