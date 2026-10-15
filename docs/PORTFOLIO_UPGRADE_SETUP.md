@@ -82,3 +82,20 @@ Vercel environment metadata access returned 403 for the connected scope. Paystac
 - **Preview limitation:** Vercel project `froshcodeorbit` has SSO protection set to `all_except_custom_domains`. Paystack webhook delivery to protected `*.vercel.app` preview hostnames cannot be assumed to work. Keep preview protection enabled. Do not point Paystack live webhook to a transient preview, expose the SSO bypass token, or enable live charges while testing. Configure the webhook in Paystack TEST settings only when an intentionally public, stable URL is ready, then verify a signed delivery and the order's paid status when the buyer does not return.
 - **Production launch:** Explicitly review branch merge, configure production environment keys, set Paystack live webhook URL to `https://www.froshcodeorbit.site/api/store/webhook` **only after production deployment**, and test signed webhook delivery. Never deploy a test Paystack secret with live payments or vice versa.
 - **Still pending:** email receipts, durable purchase reference email retrieval, anonymous negative-access tests, duplicate webhook replay test, complete admin/resume/case-study regression, and final production approval. Paystack test checkout/download has passed, but live release is not approved.
+
+
+## Resend customer receipts (prepared 15 Oct 2026)
+
+The new `src/lib/store-receipt.ts` sends purchase confirmations only after the backend independently verifies the Paystack transaction and matching stored order. It emails the template title, amount, reference and a secure purchase recovery URL, **never** the private ZIP file or permanent storage URL. `receipt_sent_at` tracks successful Resend API acceptance. Receipt failures don't prevent paid downloads. Repeated calls use a stable Resend idempotency key and skip rows already marked sent.
+
+Applied additive migration `migrations/20261015_template_order_receipts.sql` to My Portfolio Website on 15 Oct. Existing test order remains paid, receipt not yet sent.
+
+Resend sender setup (Preview only initially):
+1. Verify a domain in Resend Domains and add the DNS records it provides, using your DNS host. A subdomain such as `mail.froshcodeorbit.site` is reasonable; use exactly the domain Resend confirms as verified.
+2. Generate a Resend API key with sending permission.
+3. In Vercel `froshcodeorbit` project, add `RESEND_API_KEY` as a **secret**, Preview only (never `NEXT_PUBLIC_`).
+4. Add `RESEND_FROM_EMAIL` in Preview as a verified-domain sender, e.g. `Frosh CodeOrbit <orders@mail.froshcodeorbit.site>` **only if that subdomain was verified**.
+5. Redeploy Preview after saving. Recover the existing paid test order to trigger a receipt email, and verify `receipt_sent_at` is populated.
+6. Do not enable production Resend keys, live Paystack or merge the PR until webhook and security tests pass.
+
+Note: Prior preview links can have Vercel SSO protection and email recovery links use the deployment's hostname. Preview receipts may only be usable by the owner; production receipts will use the public site URL. An email accepted by Resend is not proof of mailbox delivery. Review Resend send logs and inbox/spam folder.
