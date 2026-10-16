@@ -13,18 +13,18 @@ export default async function ExperienceSection() {
   if (error) console.error("Unable to load homepage templates:", error.message);
   return (
     <section id="experience" className="scroll-mt-28 bg-white py-20 transition-colors dark:bg-gray-950 sm:py-24">
-      <div className="mx-auto grid max-w-6xl items-start gap-12 px-5 lg:grid-cols-2 lg:gap-12 sm:px-6">
+      <div className="mx-auto grid max-w-7xl items-start gap-12 px-5 sm:px-6 xl:grid-cols-[minmax(250px,0.7fr)_minmax(0,2fr)] xl:gap-10">
         <ExperienceTimeline />
         <div id="templates" className="min-w-0 scroll-mt-28">
-          <div className="mb-8 flex items-center gap-4 lg:mb-12">
+          <div className="mb-8 flex items-center gap-4 xl:mb-12">
             <h2 className="text-3xl font-bold text-gray-900 dark:text-white sm:text-4xl">MARKETPLACE</h2>
             <div className="h-px min-w-0 flex-grow bg-gray-200 dark:bg-gray-700" />
           </div>
-          <p className="-mt-4 mb-5 text-sm leading-6 text-gray-600 dark:text-gray-300 lg:-mt-7">
-            Ready-made websites for your next project. Explore the templates and purchase securely.
+          <p className="-mt-4 mb-6 max-w-2xl text-sm leading-6 text-gray-600 dark:text-gray-300 xl:-mt-7">
+            Browse website templates, ebooks and study materials. Explore products and purchase securely.
           </p>
           {templates?.length
-            ? <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-1">
+            ? <div className="grid min-w-0 grid-cols-1 items-stretch gap-5 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-2 2xl:grid-cols-2">
                 {(templates as StoreTemplate[]).map(item => <TemplateCard key={item.id} item={item} />)}
               </div>
             : <div className="rounded-2xl border border-gray-200 bg-gray-50 p-7 text-sm text-gray-600 dark:border-gray-800 dark:bg-gray-900 dark:text-gray-300">
