@@ -14,7 +14,7 @@ export async function sendPurchaseReceipt(db: SupabaseClient, order: Purchase): 
 
   const { data: template } = await db.from("website_templates")
     .select("title").eq("id", order.template_id).maybeSingle();
-  const title = template?.title || "Website Template";
+  const title = template?.title || "Digital Product";
   // Use the current preview's URL for preview deliveries; fixed public domain for production.
   const base = process.env.VERCEL_ENV === "production"
     ? (process.env.NEXT_PUBLIC_SITE_URL || "https://www.froshcodeorbit.site")
@@ -28,12 +28,12 @@ export async function sendPurchaseReceipt(db: SupabaseClient, order: Purchase): 
   } catch { return; }
   const price = new Intl.NumberFormat("en-NG", { style: "currency", currency: "NGN" }).format(order.amount_kobo / 100);
   const message = [
-    "Thank you for purchasing a website template from Frosh CodeOrbit.",
-    `Template: ${title}`,
+    "Thank you for purchasing a digital product from Frosh CodeOrbit.",
+    `Product: ${title}`,
     `Amount: ${price}`,
     `Paystack reference: ${order.reference}`,
     "",
-    "Retrieve your purchased ZIP securely at:",
+    "Retrieve your purchased digital file securely at:",
     recoveryUrl,
     "",
     "Enter the email address used at checkout to verify your purchase and generate a fresh download link.",
