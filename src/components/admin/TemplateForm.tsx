@@ -60,9 +60,10 @@ export default function TemplateForm({ initialData }: { initialData?: Template }
     };
     try {
       const result = initialData?.id
-        ? await supabase.from("website_templates").update(payload).eq("id", initialData.id)
-        : await supabase.from("website_templates").insert(payload);
+        ? await supabase.from("website_templates").update(payload).eq("id", initialData.id).select("id,price_kobo").single()
+        : await supabase.from("website_templates").insert(payload).select("id,price_kobo").single();
       if (result.error) throw result.error;
+      if (result.data?.price_kobo !== payload.price_kobo) throw new Error("Saved price did not match. Please reload and try again.");
       router.push("/admin/templates"); router.refresh();
     } catch (e: unknown) { setError(e instanceof Error ? e.message : "Save failed"); }
     finally { setSaving(false); }

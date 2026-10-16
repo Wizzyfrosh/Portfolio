@@ -2,12 +2,25 @@ import { NextRequest, NextResponse } from "next/server";
 import { confirmPurchase } from "@/lib/store-fulfillment";
 
 export const dynamic = "force-dynamic";
+export const runtime = "nodejs";
 
 export async function POST(request: NextRequest) {
+  if (!request.headers.get("content-type")?.toLowerCase().startsWith("application/json")) {
+    return NextResponse.json({ error: "JSON request required" }, { status: 415 });
+  }
+  if (Number(request.headers.get("content-length") || 0) > 8192) {
+    return NextResponse.json({ error: "Request too large" }, { status: 413 });
+  }
   try {
-    const payload = await request.json();
-    const reference = typeof payload?.reference === "string" ? payload.reference.trim() : "";
-    const email = typeof payload?.email === "string" ? payload.email.trim().toLowerCase() : "";
+    const raw = await request.text();
+    if (Buffer.byteLength(raw, "utf8") > 8192) return NextResponse.json({ error: "Request too large" }, { status: 413 });
+    let payload: unknown;
+    try { payload = JSON.parse(raw); }
+    catch { return NextResponse.json({ error: "Invalid JSON" }, { status: 400 }); }
+    if (!payload || typeof payload !== "object" || Array.isArray(payload)) return NextResponse.json({ error: "Invalid request" }, { status: 400 });
+    const input = payload as Record<string, unknown>;
+    const reference = typeof input.reference === "string" ? input.reference.trim() : "";
+    const email = typeof input.email === "string" ? input.email.trim().toLowerCase() : "";
     if (!/^[a-zA-Z0-9_.=-]{8,100}$/.test(reference) ||
         !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email) || email.length > 254) {
       return NextResponse.json({ error: "Valid reference and purchase email required" }, { status: 400 });

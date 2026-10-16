@@ -4,6 +4,7 @@ import { ArrowLeft, ArrowRight, ShieldCheck, LayoutGrid } from "lucide-react";
 import TemplateCard, { type StoreTemplate } from "@/components/TemplateCard";
 
 export const dynamic = "force-dynamic";
+export const revalidate = 0;
 export const metadata = { title: "Website Templates for Sale", description: "Premium website templates by Frosh CodeOrbit." };
 
 export default async function StorePage() {
