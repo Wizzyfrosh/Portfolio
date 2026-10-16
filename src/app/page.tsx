@@ -9,6 +9,10 @@ import Contact from "@/components/Contact";
 import Footer from "@/components/Footer";
 import SplashWrapper from "@/components/SplashWrapper";
 
+// Featured template prices must never be frozen in a static homepage build.
+export const dynamic = "force-dynamic";
+export const revalidate = 0;
+
 const structuredData = {
   "@context": "https://schema.org",
   "@graph": [
