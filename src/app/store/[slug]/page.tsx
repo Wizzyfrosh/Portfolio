@@ -36,7 +36,7 @@ export default async function TemplateDetail({ params }: { params: Promise<{ slu
   if (!url || !key) notFound();
   const db = createClient(url, key, { auth: { persistSession: false } });
   const { data: item } = await db.from("website_templates")
-    .select("id,title,description,cover_image,demo_url,price_kobo").eq("slug", slug).eq("published", true).maybeSingle();
+    .select("id,title,description,cover_image,demo_url,price_kobo,product_type").eq("slug", slug).eq("published", true).maybeSingle();
   if (!item) notFound();
   return (
     <main className="min-h-screen bg-slate-50 px-4 pb-24 pt-28 text-slate-900 dark:bg-slate-950 dark:text-white sm:px-6 md:pt-36">
@@ -46,7 +46,7 @@ export default async function TemplateDetail({ params }: { params: Promise<{ slu
           <div className="grid lg:grid-cols-[minmax(0,1.55fr)_minmax(320px,1fr)]">
             <div className="min-w-0 border-b border-slate-100 p-5 sm:p-8 lg:border-b-0 lg:border-r lg:border-slate-100 lg:p-10 dark:border-slate-800">
               <div className="mb-5 flex flex-wrap items-center gap-2 text-xs font-bold uppercase tracking-widest text-blue-600">
-                <span className="rounded-full bg-blue-50 px-3 py-1.5 dark:bg-blue-950">Premium website template</span>
+                <span className="rounded-full bg-blue-50 px-3 py-1.5 dark:bg-blue-950">{item.product_type === "ebook" ? "Ebook / Study Material" : "Premium website template"}</span>
                 <span className="rounded-full bg-slate-100 px-3 py-1.5 text-slate-500 dark:bg-slate-800 dark:text-slate-300">Digital download</span>
               </div>
               <h1 className="mb-6 text-3xl font-black leading-tight tracking-tight sm:text-4xl lg:text-5xl">{item.title}</h1>
@@ -57,7 +57,7 @@ export default async function TemplateDetail({ params }: { params: Promise<{ slu
                   : <div className="flex aspect-[16/10] items-center justify-center font-semibold text-slate-400">Website preview</div>}
               </div>
               <section className="mt-8 rounded-2xl bg-slate-50 p-5 sm:p-7 dark:bg-slate-800/60">
-                <h2 className="mb-3 text-xl font-extrabold">About this template</h2>
+                <h2 className="mb-3 text-xl font-extrabold">About this {item.product_type === "ebook" ? "ebook" : "template"}</h2>
                 <p className="whitespace-pre-line break-words text-sm leading-7 text-slate-600 dark:text-slate-300 sm:text-base">{item.description}</p>
               </section>
               {item.demo_url && <a className="mt-6 inline-flex items-center gap-2 rounded-xl border border-blue-200 px-5 py-3 text-sm font-bold text-blue-700 transition hover:bg-blue-50 dark:border-blue-900 dark:text-blue-300 dark:hover:bg-blue-950" target="_blank" rel="noopener noreferrer" href={item.demo_url}><ArrowUpRight size={18}/> Open live preview</a>}
@@ -71,7 +71,7 @@ export default async function TemplateDetail({ params }: { params: Promise<{ slu
                 <BuyTemplateButton id={item.id}/>
                 <div className="mt-6 space-y-3 border-t border-slate-100 pt-5 text-sm text-slate-600 dark:border-slate-700 dark:text-slate-300">
                   <p className="flex items-start gap-3"><ShieldCheck className="mt-0.5 shrink-0 text-blue-600" size={19}/> Payment verified before your download is issued</p>
-                  <p className="flex items-start gap-3"><Download className="mt-0.5 shrink-0 text-blue-600" size={19}/> Time-limited, private ZIP download</p>
+                  <p className="flex items-start gap-3"><Download className="mt-0.5 shrink-0 text-blue-600" size={19}/> Time-limited, private {item.product_type === "ebook" ? "PDF" : "ZIP"} download</p>
                   <p className="flex items-start gap-3"><CheckCircle2 className="mt-0.5 shrink-0 text-blue-600" size={19}/> Recover your purchase using the original email</p>
                 </div>
                 <Link href="/store/recover" className="mt-6 block text-sm font-semibold text-blue-600 underline underline-offset-4">Already purchased? Recover your download</Link>

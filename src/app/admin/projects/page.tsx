@@ -53,7 +53,7 @@ export default function ProjectsPage() {
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                 <div>
                     <h1 className="text-3xl font-bold text-gray-900">Projects</h1>
-                    <p className="text-gray-500 mt-1">Manage your portfolio projects and case studies.</p>
+                    <p className="text-gray-500 mt-1">Manage your portfolio projects, descriptions, images, and links.</p>
                 </div>
                 <Link
                     href="/admin/projects/new"
@@ -148,10 +148,10 @@ export default function ProjectsPage() {
                                                 <Link
                                                     href={`/admin/projects/${project.id}/edit`}
                                                     className="inline-flex items-center gap-2 rounded-xl bg-blue-50 px-3 py-2 text-xs font-bold text-blue-700 transition hover:bg-blue-100"
-                                                    title="Edit project, case study and images"
+                                                    title="Edit project and images"
                                                 >
                                                     <Edit2 size={16} />
-                                                    Edit / Case Study
+                                                    Edit Project
                                                 </Link>
                                                 <button
                                                     onClick={() => handleDelete(project.id)}
