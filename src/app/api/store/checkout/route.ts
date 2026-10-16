@@ -29,8 +29,8 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: "Invalid request" }, { status: 400 });
     }
     const input = body as Record<string, unknown>;
-    const templateId = typeof input.templateId === "string" ? body.templateId : "";
-    const email = typeof input.email === "string" ? body.email.trim().toLowerCase() : "";
+    const templateId = typeof input.templateId === "string" ? input.templateId : "";
+    const email = typeof input.email === "string" ? input.email.trim().toLowerCase() : "";
     if (!/^[0-9a-f-]{36}$/i.test(templateId) || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email) || email.length > 254) {
       return NextResponse.json({ error: "Valid template and email are required" }, { status: 400 });
     }
