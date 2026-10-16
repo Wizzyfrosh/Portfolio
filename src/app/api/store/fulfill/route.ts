@@ -30,9 +30,11 @@ export async function POST(request: NextRequest) {
     const result = await confirmPurchase(reference, email);
     if ("error" in result) return NextResponse.json({ error: result.error }, { status: result.status });
     if (result.order.email !== email) return NextResponse.json({ error: "Order not found" }, { status: 404 });
-    const { data: template } = await result.db.from("website_templates").select("file_path")
+    const { data: template } = await result.db.from("website_templates").select("file_path,product_type")
       .eq("id", result.order.template_id).maybeSingle();
     if (!template?.file_path) return NextResponse.json({ error: "Template file unavailable. Contact support." }, { status: 503 });
+    const expectedExtension = template.product_type === "ebook" ? ".pdf" : ".zip";
+    if (!template.file_path.toLowerCase().endsWith(expectedExtension)) return NextResponse.json({ error: "Product download is misconfigured. Contact support." }, { status: 503 });
     const { data, error } = await result.db.storage.from("template-files")
       .createSignedUrl(template.file_path, 120, { download: true });
     if (error || !data?.signedUrl) return NextResponse.json({ error: "File delivery unavailable. Contact support." }, { status: 503 });
