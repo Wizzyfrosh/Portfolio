@@ -7,7 +7,7 @@ import ExperienceTimeline from "@/components/ExperienceTimeline";
 export default async function ExperienceSection() {
   const { data: templates, error } = supabase
     ? await supabase.from("website_templates")
-        .select("id,slug,title,description,cover_image,price_kobo")
+        .select("id,slug,title,description,cover_image,price_kobo,product_type")
         .eq("published", true).order("created_at", { ascending: false }).limit(3)
     : { data: [] as StoreTemplate[], error: null };
   if (error) console.error("Unable to load homepage templates:", error.message);
