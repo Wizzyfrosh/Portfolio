@@ -3,7 +3,7 @@ import Link from "next/link";
 import ContentEngagement from "@/components/ContentEngagement";
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
-import { ArrowLeft, ArrowUpRight, Github, Globe, Download, Calendar, Layers, Image as ImageIcon } from "lucide-react";
+import { ArrowLeft, ArrowUpRight, Github, Globe, Download, Calendar, Image as ImageIcon } from "lucide-react";
 
 export const revalidate = 0;
 interface ProjectPageProps { params: Promise<{ id: string }> }
@@ -37,12 +37,6 @@ export default async function ProjectDetailPage({ params }: ProjectPageProps) {
   const screenshots: string[] = Array.isArray(project.screenshots)
     ? project.screenshots.filter((value: unknown): value is string => typeof value === "string" && value.startsWith("https://"))
     : [];
-  const story = [
-    { number: "01", title: "The challenge", text: project.case_study_challenge },
-    { number: "02", title: "The solution", text: project.case_study_solution },
-    { number: "03", title: "Development process", text: project.case_study_process },
-    { number: "04", title: "Results & impact", text: project.case_study_results },
-  ].filter(section => typeof section.text === "string" && section.text.trim().length > 0);
   const tech: string[] = Array.isArray(project.tech_stack) ? project.tech_stack : [];
 
   return (
@@ -52,7 +46,7 @@ export default async function ProjectDetailPage({ params }: ProjectPageProps) {
         <article className="mt-8 overflow-hidden rounded-[28px] border border-slate-200 bg-white shadow-[0_20px_70px_-40px_rgba(15,23,42,.4)] dark:border-slate-800 dark:bg-slate-900">
           <header className="border-b border-slate-100 px-5 py-8 dark:border-slate-800 sm:px-10 sm:py-10">
             <div className="mb-5 flex flex-wrap items-center gap-3">
-              <span className="rounded-full bg-blue-50 px-4 py-2 text-xs font-extrabold uppercase tracking-widest text-blue-700 dark:bg-blue-950 dark:text-blue-300">Project case study</span>
+              <span className="rounded-full bg-blue-50 px-4 py-2 text-xs font-extrabold uppercase tracking-widest text-blue-700 dark:bg-blue-950 dark:text-blue-300">Portfolio project</span>
               {project.created_at && <span className="inline-flex items-center gap-2 text-xs font-semibold text-slate-400"><Calendar size={14}/>{new Date(project.created_at).toLocaleDateString("en-US", { year: "numeric", month: "long", day: "numeric" })}</span>}
             </div>
             <h1 className="max-w-4xl break-words text-3xl font-black leading-[1.12] tracking-tight sm:text-4xl lg:text-5xl">{project.title}</h1>
@@ -78,16 +72,7 @@ export default async function ProjectDetailPage({ params }: ProjectPageProps) {
                   {screenshots.slice(1).map((src, index) => <a key={index} href={src} target="_blank" rel="noopener noreferrer" className="block overflow-hidden rounded-xl border border-slate-200 bg-slate-100 transition hover:border-blue-400 dark:border-slate-700 dark:bg-slate-800" aria-label={`Open project screenshot ${index + 2}`}><img src={src} alt={`${project.title} screenshot ${index + 2}`} loading="lazy" className="aspect-[4/3] w-full object-cover object-top"/></a>)}
                 </div>}
               </section>}
-              {story.length > 0 && <section>
-                <div className="mb-4 flex items-center gap-2"><Layers size={19} className="text-blue-600"/><h2 className="text-xl font-extrabold">Inside the project</h2></div>
-                <div className="space-y-4">
-                  {story.map(section => <div key={section.number} className="rounded-2xl border border-slate-200 bg-white p-5 dark:border-slate-700 dark:bg-slate-800/50 sm:p-7">
-                    <div className="mb-3 flex items-center gap-3"><span className="text-sm font-black text-blue-600">{section.number}</span><h3 className="text-lg font-extrabold">{section.title}</h3></div>
-                    <p className="whitespace-pre-line break-words text-sm leading-7 text-slate-600 dark:text-slate-300 sm:text-base">{section.text}</p>
-                  </div>)}
-                </div>
-              </section>}
-              {screenshots.length === 0 && story.length === 0 && <div className="rounded-2xl border border-slate-200 bg-slate-50 p-8 text-slate-500 dark:border-slate-700 dark:bg-slate-800">More project images and details will be added soon.</div>}
+              {screenshots.length === 0 && <div className="rounded-2xl border border-slate-200 bg-slate-50 p-8 text-slate-500 dark:border-slate-700 dark:bg-slate-800">More project images will be added soon.</div>}
             </div>
             <aside className="min-w-0">
               <div className="rounded-2xl border border-slate-200 bg-slate-50 p-5 dark:border-slate-700 dark:bg-slate-800 lg:sticky lg:top-28 sm:p-6">
