@@ -22,10 +22,6 @@ export default function ProjectForm({ initialData }: ProjectFormProps) {
         github_url: initialData?.github_url || "",
         apk_url: initialData?.apk_url || "",
         published: initialData?.published || false,
-        case_study_challenge: initialData?.case_study_challenge || "",
-        case_study_solution: initialData?.case_study_solution || "",
-        case_study_process: initialData?.case_study_process || "",
-        case_study_results: initialData?.case_study_results || "",
     });
 
     const [screenshots, setScreenshots] = useState<string[]>(initialData?.screenshots || []);
@@ -83,10 +79,6 @@ export default function ProjectForm({ initialData }: ProjectFormProps) {
             github_url: formData.github_url || null,
             apk_url: formData.apk_url || null,
             published: formData.published,
-            case_study_challenge: formData.case_study_challenge,
-            case_study_solution: formData.case_study_solution,
-            case_study_process: formData.case_study_process,
-            case_study_results: formData.case_study_results,
             screenshots: screenshots,
         };
 
@@ -194,36 +186,18 @@ export default function ProjectForm({ initialData }: ProjectFormProps) {
                 </div>
             </div>
 
-            {/* Editable project case study */}
-            <div className="space-y-4">
-                <h3 className="text-xl font-bold text-gray-900 border-b pb-2">Case Study (Optional)</h3>
-                <p className="text-sm text-gray-500">Add the project's real story. Leave empty for regular portfolio projects.</p>
-                {([
-                    ["case_study_challenge", "The Challenge"],
-                    ["case_study_solution", "The Solution"],
-                    ["case_study_process", "Development Process"],
-                    ["case_study_results", "Results & Impact"],
-                ] as const).map(([name, label]) => (
-                    <div key={name}>
-                        <label htmlFor={name} className="block text-sm font-medium text-gray-700 mb-1">{label}</label>
-                        <textarea id={name} name={name} value={formData[name]} onChange={handleChange}
-                            rows={4} maxLength={10000} className="w-full px-4 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none resize-none" />
-                    </div>
-                ))}
-            </div>
-
             {/* Media Uploads */}
             <div className="space-y-4">
                 <h3 className="text-xl font-bold text-gray-900 border-b pb-2">Media & Files</h3>
 
                 {/* Screenshots */}
                 <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">Project / Case Study Images</label>
-                    <p className="mb-3 text-xs text-gray-500">Upload PNG, JPG or WebP, up to 5 MB each. The first image becomes the cover of the project and case study. You can remove existing images and add replacements.</p>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">Project Images</label>
+                    <p className="mb-3 text-xs text-gray-500">Upload PNG, JPG or WebP, up to 5 MB each. The first image becomes the cover of the project and project detail page. You can remove existing images and add replacements.</p>
                     <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-3">
                         {screenshots.map((url, idx) => (
                             <div key={idx} className="relative group aspect-video bg-gray-100 rounded-lg overflow-hidden">
-                                <img src={url} alt={`Case study image ${idx + 1}`} className="object-cover w-full h-full" />
+                                <img src={url} alt={`Project image ${idx + 1}`} className="object-cover w-full h-full" />
                                 <div className="absolute bottom-1 left-1 right-1 flex items-center gap-1">
                                     {idx === 0 ? <span className="rounded-md bg-blue-600 px-2 py-1 text-[10px] font-bold text-white">Cover image</span>
                                       : <button type="button" className="rounded-md bg-white/95 px-2 py-1 text-[10px] font-bold text-slate-900 shadow" onClick={() => setScreenshots(prev => [prev[idx], ...prev.filter((_, i) => i !== idx)])}>Set as cover</button>}
