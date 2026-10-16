@@ -19,8 +19,8 @@ export async function POST(request: NextRequest) {
     catch { return NextResponse.json({ error: "Invalid JSON" }, { status: 400 }); }
     if (!payload || typeof payload !== "object" || Array.isArray(payload)) return NextResponse.json({ error: "Invalid request" }, { status: 400 });
     const input = payload as Record<string, unknown>;
-    const reference = typeof input.reference === "string" ? payload.reference.trim() : "";
-    const email = typeof input.email === "string" ? payload.email.trim().toLowerCase() : "";
+    const reference = typeof input.reference === "string" ? input.reference.trim() : "";
+    const email = typeof input.email === "string" ? input.email.trim().toLowerCase() : "";
     if (!/^[a-zA-Z0-9_.=-]{8,100}$/.test(reference) ||
         !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email) || email.length > 254) {
       return NextResponse.json({ error: "Valid reference and purchase email required" }, { status: 400 });
