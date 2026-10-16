@@ -65,9 +65,9 @@ export async function POST(request: NextRequest) {
     });
     const result = await paystack.json().catch(() => null);
     let validCheckoutUrl = false;
-    try { const checkout = new URL(result.data?.authorization_url); validCheckoutUrl = checkout.protocol === "https:" && checkout.hostname === "checkout.paystack.com"; }
+    try { const checkout = new URL(result?.data?.authorization_url); validCheckoutUrl = checkout.protocol === "https:" && checkout.hostname === "checkout.paystack.com"; }
     catch { /* Invalid payment URL */ }
-    if (!paystack.ok || !result.status || !validCheckoutUrl || result.data?.reference !== reference) {
+    if (!paystack.ok || !result?.status || !validCheckoutUrl || result?.data?.reference !== reference) {
       return NextResponse.json({ error: "Payment initialization failed" }, { status: 502 });
     }
     const { error } = await db.from("template_orders").insert({
