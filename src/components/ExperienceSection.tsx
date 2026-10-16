@@ -3,6 +3,7 @@ import { ArrowRight, ShoppingBag } from "lucide-react";
 import { supabase } from "@/lib/supabase";
 import TemplateCard, { type StoreTemplate } from "@/components/TemplateCard";
 import ExperienceTimeline from "@/components/ExperienceTimeline";
+import DeveloperVisual from "@/components/DeveloperVisual";
 
 export default async function ExperienceSection() {
   const { data: templates, error } = supabase
@@ -19,8 +20,9 @@ export default async function ExperienceSection() {
     <section id="experience" className="scroll-mt-28 bg-white py-20 transition-colors dark:bg-gray-950 sm:py-24">
       <div className="mx-auto max-w-7xl space-y-20 px-5 sm:px-6 lg:space-y-24">
         {/* Separate, full-width sections. Experience must always precede the marketplace. */}
-        <div className="max-w-4xl">
+        <div className="grid items-stretch gap-8 lg:grid-cols-2 lg:gap-10">
           <ExperienceTimeline />
+          <DeveloperVisual />
         </div>
 
         <div id="templates" className="min-w-0 scroll-mt-28">
