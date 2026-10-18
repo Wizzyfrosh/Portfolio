@@ -47,10 +47,10 @@ export default function Home() {
         <About />
         <Services />
         <ExperienceSection />
-        <SupportWork />
         <div id="projects">
           <ProjectsSection />
         </div>
+        <SupportWork />
         <Contact />
         <Footer />
       </main>
