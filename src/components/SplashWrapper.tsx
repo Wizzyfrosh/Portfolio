@@ -1,8 +1,7 @@
 "use client";
 
-import { ReactNode } from "react";
+import { ReactNode, useEffect } from "react";
 import SplashScreen, { useSplashScreen } from "@/components/SplashScreen";
-import { AnimatePresence, motion } from "framer-motion";
 import { LoaderCircle } from "lucide-react";
 
 interface SplashWrapperProps {
@@ -11,42 +10,37 @@ interface SplashWrapperProps {
 
 export default function SplashWrapper({ children }: SplashWrapperProps) {
   const { showSplash, isReady, handleComplete } = useSplashScreen();
+  const isBlocked = !isReady || showSplash;
 
-  // Prevent layout shift — render solid bg until we know splash state
-  if (!isReady) {
-    return (
-      <div className="fixed inset-0 z-[9999] flex items-center justify-center bg-[#0a0a0f]" role="status" aria-label="Loading portfolio">
-        <LoaderCircle className="h-9 w-9 animate-spin text-blue-400" aria-hidden="true" />
-        <span className="sr-only">Loading portfolio</span>
-      </div>
-    );
-  }
+  // Fail open if a browser suspends/skips Framer Motion's splash exit callback.
+  useEffect(() => {
+    if (!isReady || !showSplash) return;
+    const fallback = window.setTimeout(handleComplete, 11400);
+    return () => window.clearTimeout(fallback);
+  }, [isReady, showSplash, handleComplete]);
 
   return (
     <>
-      {/* Splash overlay */}
-      {showSplash && <SplashScreen onComplete={handleComplete} />}
+      {/* Render the homepage exactly once, including in server HTML for SEO.
+          Overlay it until the intro or reload spinner completes. */}
+      <div
+        aria-hidden={isBlocked}
+        className={`min-h-screen transition-opacity duration-500 ease-out motion-reduce:transition-none ${isBlocked ? "pointer-events-none select-none opacity-0" : "opacity-100"}`}
+      >
+        {children}
+      </div>
 
-      {/* Main content — fades in after splash completes */}
-      <AnimatePresence>
-        {!showSplash && (
-          <motion.div
-            key="main-content"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ duration: 0.6, ease: "easeOut" }}
-          >
-            {children}
-          </motion.div>
-        )}
-      </AnimatePresence>
-
-      {/* Hidden duplicate keeps server components hydrated during splash */}
-      {showSplash && (
-        <div className="sr-only" aria-hidden="true">
-          {children}
+      {/* Spinner on initial hydration and hard reloads; no second copy of page content. */}
+      {!isReady && (
+        <div className="fixed inset-0 z-[9999] flex items-center justify-center bg-[#0a0a0f]"
+          role="status" aria-label="Loading portfolio">
+          <LoaderCircle className="h-9 w-9 animate-spin text-blue-400 motion-reduce:animate-none" aria-hidden="true" />
+          <span className="sr-only">Loading portfolio</span>
         </div>
       )}
+
+      {/* Full branded splash only on new entry, never on hard reload. */}
+      {isReady && showSplash && <SplashScreen onComplete={handleComplete} />}
     </>
   );
 }

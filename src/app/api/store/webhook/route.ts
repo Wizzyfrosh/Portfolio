@@ -1,6 +1,7 @@
 import { isValidPaystackSignature } from "@/lib/paystack-webhook-signature";
 import { NextRequest, NextResponse } from "next/server";
 import { confirmPurchase } from "@/lib/store-fulfillment";
+import { verifySupportContribution } from "@/lib/support-payments";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -26,7 +27,9 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: "Invalid reference" }, { status: 400 });
   }
   try {
-    const result = await confirmPurchase(reference);
+    const result = reference.startsWith("support_")
+      ? await verifySupportContribution(reference)
+      : await confirmPurchase(reference);
     if ("error" in result) {
       // A transaction from a different product or an unknown order is not ours to process.
       if (result.status === 404) return NextResponse.json({ received: true });

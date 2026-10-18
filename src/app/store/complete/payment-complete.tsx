@@ -31,7 +31,7 @@ export default function PaymentComplete() {
   return <main className="min-h-screen bg-gray-50 px-6 py-16 text-gray-900 dark:bg-gray-950 dark:text-white">
     <div className="mx-auto max-w-lg space-y-6 rounded-2xl border bg-white p-8 shadow-sm dark:border-gray-800 dark:bg-gray-900">
       <h1 className="text-3xl font-bold">Verify Your Purchase</h1>
-      <p className="text-gray-500 dark:text-gray-300">We verify your payment securely with Paystack before making your template available.</p>
+      <p className="text-gray-500 dark:text-gray-300">We verify your payment securely with Paystack before making your purchased digital product available.</p>
       {reference ? <form className="space-y-4" onSubmit={verify}>
         <label className="block text-sm font-semibold">Email used at checkout
           <input type="email" required value={email} onChange={e => setEmail(e.target.value)} className="mt-2 w-full rounded-lg border p-3 text-gray-900" />
@@ -39,7 +39,7 @@ export default function PaymentComplete() {
         <button disabled={busy} className="rounded-full bg-blue-600 px-6 py-3 font-semibold text-white disabled:opacity-50">{busy ? "Verifying..." : "Verify and get download"}</button>
       </form> : <p className="text-red-600">No payment reference was provided. Return to the store or contact support.</p>}
       {status && <p role="status" className="text-sm">{status}</p>}
-      {downloadUrl && <a href={downloadUrl} className="inline-block rounded-full bg-green-600 px-6 py-3 font-bold text-white" rel="noreferrer">Download purchased ZIP</a>}
+      {downloadUrl && <a href={downloadUrl} className="inline-block rounded-full bg-green-600 px-6 py-3 font-bold text-white" rel="noreferrer">Download purchased file</a>}
       <Link href="/store/recover" className="block text-blue-600">Need to recover a previous purchase?</Link>
       <Link href="/store" className="block text-blue-600">Back to store</Link>
     </div>
