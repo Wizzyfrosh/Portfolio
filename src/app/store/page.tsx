@@ -23,18 +23,18 @@ export default async function StorePage() {
             <div className="max-w-2xl">
               <p className="mb-4 inline-flex items-center gap-2 rounded-full bg-blue-50 px-4 py-2 text-xs font-extrabold uppercase tracking-[.17em] text-blue-700 dark:bg-blue-950 dark:text-blue-300"><LayoutGrid size={14}/> FroshCodeOrbit Marketplace</p>
               <h1 className="text-4xl font-black leading-[1.1] tracking-tight sm:text-5xl">Digital resources for your next big idea.</h1>
-              <p className="mt-5 text-base leading-7 text-slate-600 dark:text-slate-300">Explore website templates, ebooks and study materials. Browse the details and live preview before choosing the right starting point.</p>
+              <p className="mt-5 text-base leading-7 text-slate-600 dark:text-slate-300">Explore website templates, ebooks and study materials. Choose a product and go straight to secure checkout.</p>
             </div>
             <Link href="/store/recover" className="inline-flex shrink-0 items-center justify-center gap-2 rounded-xl border border-slate-200 bg-slate-50 px-5 py-3 text-sm font-bold text-slate-700 transition hover:border-blue-300 hover:text-blue-700 dark:border-slate-700 dark:bg-slate-800 dark:text-white"><ShieldCheck size={17}/> Recover a purchase <ArrowRight size={16}/></Link>
           </div>
         </div>
         <div className="mb-6 flex items-end justify-between gap-4">
-          <div><p className="mb-2 text-xs font-bold uppercase tracking-widest text-blue-600">Browse the collection</p><h2 className="text-2xl font-extrabold sm:text-3xl">All templates</h2></div>
+          <div><p className="mb-2 text-xs font-bold uppercase tracking-widest text-blue-600">Browse the collection</p><h2 className="text-2xl font-extrabold sm:text-3xl">All digital products</h2></div>
           <span className="rounded-full border border-slate-200 bg-white px-4 py-2 text-xs font-semibold text-slate-500 dark:border-slate-700 dark:bg-slate-900">{(items || []).length} available</span>
         </div>
         {(items || []).length > 0
           ? <div className="grid items-stretch gap-6 sm:grid-cols-2 lg:grid-cols-3">{(items as StoreTemplate[]).map(item => <TemplateCard key={item.id} item={item}/>)}</div>
-          : <div className="rounded-3xl border border-slate-200 bg-white p-12 text-center text-slate-500 dark:border-slate-800 dark:bg-slate-900">No templates are published yet. Check back soon.</div>}
+          : <div className="rounded-3xl border border-slate-200 bg-white p-12 text-center text-slate-500 dark:border-slate-800 dark:bg-slate-900">No digital products are published yet. Check back soon.</div>}
       </div>
     </main>
   );
