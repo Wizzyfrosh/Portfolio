@@ -422,24 +422,32 @@ function SplashParticles() {
   );
 }
 
+/* One intro per full document navigation, not on soft-route revisits. */
+let splashDecisionMadeForDocument = false;
+
 /* ─── Hook to manage splash visibility ─── */
 export function useSplashScreen() {
   const [showSplash, setShowSplash] = useState(false);
   const [isReady, setIsReady] = useState(false);
 
   useEffect(() => {
-    // A first-visit introduction, remembered across refreshes and return visits.
-    // If storage is unavailable, prefer showing content rather than blocking users.
-    try {
-      const seen = window.localStorage.getItem("froshcodeorbit_splash_seen_v1");
-      if (!seen) {
-        window.localStorage.setItem("froshcodeorbit_splash_seen_v1", "1");
-        setShowSplash(true);
-      }
-    } catch {
-      // Browsers may block localStorage in private or restricted contexts.
+    // navigation.type differentiates a fresh entry from a hard reload.
+    // Persistent localStorage caused the intro to disappear for return visitors.
+    const navigation = performance.getEntriesByType("navigation")[0] as PerformanceNavigationTiming | undefined;
+    const isReloadOrHistory = navigation?.type === "reload" || navigation?.type === "back_forward";
+    const isFreshHomeEntry = !isReloadOrHistory && !splashDecisionMadeForDocument;
+    splashDecisionMadeForDocument = true;
+
+    if (isFreshHomeEntry) {
+      setShowSplash(true);
+      setIsReady(true);
+      return;
     }
-    setIsReady(true);
+
+    // The wrapper's lightweight spinner is shown during hard reloads
+    // and subsequent client-side entries instead of replaying the full animation.
+    const timeout = window.setTimeout(() => setIsReady(true), 700);
+    return () => window.clearTimeout(timeout);
   }, []);
 
   const handleComplete = useCallback(() => {
