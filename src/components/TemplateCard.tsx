@@ -1,4 +1,3 @@
-import Link from "next/link";
 import ContentEngagement from "@/components/ContentEngagement";
 import { LayoutTemplate } from "lucide-react";
 import GetProductButton from "@/components/GetProductButton";
@@ -14,7 +13,7 @@ export default function TemplateCard({ item }: { item: StoreTemplate }) {
       <div className="block overflow-hidden bg-slate-100 dark:bg-slate-800">
         <div className="relative aspect-[16/10] overflow-hidden">
           {item.cover_image
-            ? <img src={item.cover_image} alt={`${item.title} website preview`} loading="lazy" className="h-full w-full object-cover object-top transition-transform duration-500 group-hover:scale-[1.035]"/>
+            ? <img src={item.cover_image} alt={`${item.title} digital product preview`} loading="lazy" className="h-full w-full object-cover object-top transition-transform duration-500 group-hover:scale-[1.035]"/>
             : <div className="flex h-full items-center justify-center gap-3 text-slate-400"><LayoutTemplate size={30}/><span className="font-semibold">Digital product preview</span></div>}
           <span className="absolute left-4 top-4 rounded-full border border-white/80 bg-white/95 px-3 py-1.5 text-[11px] font-bold uppercase tracking-widest text-blue-700 shadow-sm">{item.product_type === "ebook" ? "Ebook / Study Material" : "Website Template"}</span>
         </div>
