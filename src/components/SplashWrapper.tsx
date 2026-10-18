@@ -1,6 +1,6 @@
 "use client";
 
-import { ReactNode } from "react";
+import { ReactNode, useEffect } from "react";
 import SplashScreen, { useSplashScreen } from "@/components/SplashScreen";
 import { AnimatePresence, motion } from "framer-motion";
 import { LoaderCircle } from "lucide-react";
@@ -11,6 +11,13 @@ interface SplashWrapperProps {
 
 export default function SplashWrapper({ children }: SplashWrapperProps) {
   const { showSplash, isReady, handleComplete } = useSplashScreen();
+
+  // Safety net for interrupted tab animations or browsers that skip exit callbacks.
+  useEffect(() => {
+    if (!isReady || !showSplash) return;
+    const fallback = window.setTimeout(handleComplete, 11400);
+    return () => window.clearTimeout(fallback);
+  }, [isReady, showSplash, handleComplete]);
 
   // Prevent layout shift — render solid bg until we know splash state
   if (!isReady) {
