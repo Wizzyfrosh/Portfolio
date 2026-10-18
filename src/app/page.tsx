@@ -5,6 +5,7 @@ import Services from "@/components/Services";
 import ExperienceSection from "@/components/ExperienceSection";
 import ProjectsSection from "@/components/ProjectsSection";
 import Contact from "@/components/Contact";
+import SupportWork from "@/components/SupportWork";
 import Footer from "@/components/Footer";
 import SplashWrapper from "@/components/SplashWrapper";
 
@@ -46,6 +47,7 @@ export default function Home() {
         <About />
         <Services />
         <ExperienceSection />
+        <SupportWork />
         <div id="projects">
           <ProjectsSection />
         </div>
