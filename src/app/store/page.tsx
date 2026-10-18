@@ -1,6 +1,6 @@
 import { createClient } from "@supabase/supabase-js";
 import Link from "next/link";
-import { ArrowLeft, ArrowRight, ShieldCheck, LayoutGrid } from "lucide-react";
+import { ArrowLeft, ArrowRight, ShieldCheck, LayoutGrid, HeartHandshake } from "lucide-react";
 import TemplateCard, { type StoreTemplate } from "@/components/TemplateCard";
 
 export const dynamic = "force-dynamic";
@@ -25,7 +25,14 @@ export default async function StorePage() {
               <h1 className="text-4xl font-black leading-[1.1] tracking-tight sm:text-5xl">Digital resources for your next big idea.</h1>
               <p className="mt-5 text-base leading-7 text-slate-600 dark:text-slate-300">Explore website templates, ebooks and study materials. Choose a product and go straight to secure checkout.</p>
             </div>
-            <Link href="/store/recover" className="inline-flex shrink-0 items-center justify-center gap-2 rounded-xl border border-slate-200 bg-slate-50 px-5 py-3 text-sm font-bold text-slate-700 transition hover:border-blue-300 hover:text-blue-700 dark:border-slate-700 dark:bg-slate-800 dark:text-white"><ShieldCheck size={17}/> Recover a purchase <ArrowRight size={16}/></Link>
+            <div className="flex shrink-0 flex-wrap items-center gap-3">
+              <Link href="/support" className="inline-flex items-center justify-center gap-2 rounded-xl bg-blue-600 px-5 py-3 text-sm font-bold text-white transition hover:bg-blue-700">
+                <HeartHandshake size={17}/> Support my work
+              </Link>
+              <Link href="/store/recover" className="inline-flex items-center justify-center gap-2 rounded-xl border border-slate-200 bg-slate-50 px-5 py-3 text-sm font-bold text-slate-700 transition hover:border-blue-300 hover:text-blue-700 dark:border-slate-700 dark:bg-slate-800 dark:text-white">
+                <ShieldCheck size={17}/> Recover a purchase <ArrowRight size={16}/>
+              </Link>
+            </div>
           </div>
         </div>
         <div className="mb-6 flex items-end justify-between gap-4">
