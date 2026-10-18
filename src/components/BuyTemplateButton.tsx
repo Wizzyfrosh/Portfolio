@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 
-export default function BuyTemplateButton({ id }: { id: string }) {
+export default function BuyTemplateButton({ id, buttonLabel = "Buy securely with Paystack" }: { id: string; buttonLabel?: string }) {
   const [email, setEmail] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
@@ -27,7 +27,7 @@ export default function BuyTemplateButton({ id }: { id: string }) {
     <input id={`buyer-${id}`} required type="email" autoComplete="email" value={email} onChange={e => setEmail(e.target.value)}
       className="w-full rounded-lg border border-gray-200 bg-white p-3 text-gray-900" placeholder="you@example.com" />
     <button type="submit" disabled={loading} className="w-full rounded-lg bg-blue-600 px-4 py-3 font-bold text-white disabled:opacity-50">
-      {loading ? "Preparing checkout..." : "Buy securely with Paystack"}
+      {loading ? "Preparing checkout..." : buttonLabel}
     </button>
     {error && <p role="alert" className="text-sm text-red-600">{error}</p>}
   </form>;
